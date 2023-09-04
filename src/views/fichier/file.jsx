@@ -2,42 +2,61 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import FichierHeader from "../../template/header/fichierHeader";
-import { WebView } from 'react-native-webview';
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { ActivityIndicator } from "react-native-paper";
 import AnimatedLottieView from "lottie-react-native";
 import { TextInput } from "@react-native-material/core";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
+import { Get } from "../../api/service";
 
 
 export default function File() {
     
-    const nav=  useNavigation()
-    const ref= useRef()
-    const [search, setSearch]=useState("")
-    const [files, setFiles]=useState([{id: 0}, {id: 1},{id: 2},{id: 4},{id: 5},{id: 6},{id: 7}])
-    const front= useSelector((state)=>state.themeReducer.front)
-    const chart= useSelector((state)=>state.themeReducer.chart)
+    const nav=  useNavigation();
+    const ref= useRef();
+    const [search, setSearch]=useState("");
+    const front= useSelector((state)=>state.themeReducer.front);
+    const back= useSelector((state)=>state.themeReducer.back);
+    const chart= useSelector((state)=>state.themeReducer.chart);
+
+    const token= useSelector((state)=> state.userReducer.token);
+    const user= useSelector((state)=> state.userReducer.user);
 
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
-                return <FichierHeader   />
+                return <FichierHeader />
             }, 
             headerShown: true
         })
     }, [])
 
     function handleSearch(){
-        if(files.length > 0){
-            nav.navigate("file/result", {files: files})
-        }else{
+        Get("/document/all/search/"+user?.ecole?._id+"/"+search, token).then(
+            (rs)=>{
+                //console.log(rs);
+                if(!rs?.error){
+                    if(rs?.documents?.length > 0){
+                        nav.navigate("file/result", {files: rs?.documents})
+                    }else{
+                        Toast.show({
+                            text1: "remarques", text2: "aucun document trouvé. Veuillez spécifier votre recherche!", type:"info",
+                            topOffset: 60
+                        })
+                    }
+                }else{
+                    Toast.show({
+                        text1: "erreur", text2: "erreur de recherche!", type:"error",
+                        topOffset: 60
+                    })
+                }
+            }
+        ).catch(()=>{
             Toast.show({
-                text1: "remarques", text2: "veuillez spécifier votre recherche!", type:"info",
+                text1: "erreur", text2: "problème de recherche!", type:"error",
                 topOffset: 60
             })
-        }
+        });
     }
 
     const style = StyleSheet.create({
@@ -67,10 +86,10 @@ export default function File() {
                 </View>
 
                 <TextInput 
-                    leading={<Ionicons name="search" size={20} color={front} />}
+                    leading={<Ionicons name="search" size={20} color={back} />} inputStyle={{color:"white"}}
                     onChangeText={setSearch} {...props} returnKeyLabel="recherche"
                     trailing={<TouchableOpacity onPress={handleSearch}>
-                        <Ionicons name="md-enter" size={25} color={front} />
+                        <Ionicons name="md-enter" size={25} color={back} />
                     </TouchableOpacity>} onSubmitEditing={handleSearch}
                 />
 

@@ -1,12 +1,12 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import React, { useEffect } from "react";
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { ActivityIndicator } from "react-native-paper";
 import AnimatedLottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import SimpleHeader from "../../template/header/simpleHeader";
 import { ScrollView } from "react-native";
+import { API } from "../../api/service";
 
 
 export default function FileResult() {
@@ -38,6 +38,20 @@ export default function FileResult() {
         line:{display: "flex", flexDirection: "row", alignItems: "center", margin: 10, marginLeft: 35},
     })
 
+    function handleOpen(item){
+        const libelle= item?.libelle;
+        const isPdf= libelle?.includes(".pdf");
+        if(!isPdf){
+            Linking.openURL(API+"/document/show/"+item?.libelle).then(
+                (rs)=>{
+                    //console.log(rs);
+                }
+            ).catch(()=> {})
+        }else{
+            nav.navigate("pdf", {document: API+"/document/show/"+libelle})
+        }
+    }
+
     return (
         <View style={style.container}>
             <View style={{alignItems: "center"}}>
@@ -50,12 +64,13 @@ export default function FileResult() {
             <ScrollView contentContainerStyle={style.scroll} showsHorizontalScrollIndicator={false}>
                 {
                     files.map(
-                        ({item, id})=>{
+                        (item, id)=>{
+                            //console.log(item);
                             return (
-                                <TouchableOpacity style={style.line} key={id}>
+                                <TouchableOpacity style={style.line} key={id} onPress={()=>handleOpen(item)}>
                                     <Ionicons name="file-tray-full" size={35} color={front} />
                                     <Text style={style.info}>
-                                        chapitre 1 : relativité restreinte 
+                                        {item?.label}
                                     </Text>
                                 </TouchableOpacity> 
                             );

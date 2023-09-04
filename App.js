@@ -1,9 +1,11 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import PreApp from './PreApp';
 import Provide from "./src/redux/provider";
 import {LocaleConfig} from 'react-native-calendars';
+import { useEffect, useState } from 'react';
+import NetInfo from "@react-native-community/netinfo";
+import NoInternet from './src/template/component/noInternet';
 
 LocaleConfig.locales['fr'] = {
   monthNames: [
@@ -19,20 +21,27 @@ LocaleConfig.defaultLocale = 'fr';
 
 export default function App() {
 
+  const [alert, setAlert] = useState(false);
+
+  useEffect(()=>{
+    const unsubscribe = NetInfo.addEventListener((st) => {
+      if(!st.isConnected){
+        setAlert(true);
+      }else{
+        setAlert(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [])
 
   return (
     <Provide>
-        <StatusBar style="auto" />
-        <PreApp />
+      <StatusBar style="auto" />
+      {alert ? <NoInternet /> :  <PreApp />}
     </Provide>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

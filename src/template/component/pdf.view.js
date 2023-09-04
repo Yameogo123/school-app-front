@@ -1,18 +1,17 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import {Dimensions, Platform, StyleSheet, View, Linking, Alert} from 'react-native';
+import {Dimensions, StyleSheet, View, Linking, Alert} from 'react-native';
 import Pdf from 'react-native-pdf';
 import SimpleHeader from '../header/simpleHeader';
 
-const DOCUMENT = 'https://www.afmc.ch/fileadmin/user_upload/exemple-1.pdf';
 
 export default function PdfView() {
   
     const nav=  useNavigation()
     const route= useRoute()
 
-    const document= route.params?.document
-    const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
+    const document= route.params?.document || 'http://samples.leanpub.com/thereactnativebook-sample.pdf';
+    const source = { uri: document, cache: true };
 
     useEffect(() => {
         nav.setOptions({
@@ -25,8 +24,9 @@ export default function PdfView() {
 
     return (
         <View style={styles.container}>
-            <Pdf
-                source={source} 
+            <Pdf 
+                trustAllCerts={false}
+                source={source} fitWidth={true} style={styles.pdf}
                 onLoadComplete={(numberOfPages,filePath) => {
                     //console.log(`Number of pages: ${numberOfPages}`);
                 }}
@@ -39,7 +39,6 @@ export default function PdfView() {
                 onPressLink={(uri) => {
                     Linking.openURL(uri).then(()=> Alert.alert("Lien", uri+" ouvert avec succès"))
                 }}
-                style={styles.pdf}
             />
         </View>
     );

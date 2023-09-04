@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "front",
-    "slug": "front",
-    "version": "1.0.0",
+    "name": "school-champ",
+    "slug": "school",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,17 +16,32 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.front"
+      "bundleIdentifier": "com.school.front",
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.front"
+      "package": "com.school.front"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8495b75b-e648-41ad-852d-436467453c7d"
+      }
+    },
+    "owner": "wendyam23"
   }
 }

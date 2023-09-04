@@ -31,10 +31,9 @@ export default function Header({show=true}){
         nav.goBack()
     }
 
-
     return (
         <View>
-            {user ==="" ? <NoLoggedHeader handleTheme={switchTheme} goBack={handleGoBack} show={show} /> : <LoggedHeader handleTheme={switchTheme} goBack={handleGoBack} show={show} /> }
+            <LoggedHeader handleTheme={switchTheme} goBack={handleGoBack} show={show} /> 
         </View>
     );
 

@@ -8,6 +8,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Keyboard } from "react-native";
 import { storeObject, storeString } from "../../redux/storage";
 import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
+import { Send } from "../../api/service";
+import { ActivityIndicator } from "react-native-paper";
+import moment from "moment";
 
 
 
@@ -21,6 +25,9 @@ export default function Login(){
     const [message, setMessage]= useState("")
     const [secure, setSecure]= useState(true)
     const dispatch= useDispatch()
+    const nav= useNavigation()
+
+    const [loading, setLoading]= useState(false)
 
     useEffect(()=>{
         const tim= setTimeout(()=>setMessage(""), 5000)
@@ -29,22 +36,44 @@ export default function Login(){
 
     function handleLogin(){
         if(email!=="" && password!==""){
+            setLoading(true)
             const user={
-                email: email, password: password
+                mail: email, password: password
             }
-            const token= "token"
-            const login={user: user, token: token}
-            storeObject("login", login).then(
-                ()=>{
-                    const action={type: "login", value: login}
-                    dispatch(action)
-                    Toast.show({
-                        text1: "connexion",
-                        text2: "bienvenue à vous mr YAMEOGO",
-                        topOffset: 50
-                    })
+            Send("/user/login", user).then(
+                (rs)=>{
+                    if(rs?.error){
+                        Toast.show({
+                            text1: "Attention", text2: "Vérifier vos identifiants ",
+                            topOffset: 50, type: "error"
+                        })
+                    }else{
+                        storeObject("login", rs).then(
+                            ()=>{
+                                const action={type: "login", value: rs}
+                                dispatch(action);
+                                storeString("log", moment().add(12, "hours").toISOString()).then(()=>{})
+                                storeString("connected", "connected").then(
+                                    ()=>{
+                                        const act={type: "connexion", value: "connected"}
+                                        dispatch(act);
+                                        Toast.show({
+                                            text1: "connexion", text2: "bienvenue à vous "+rs?.user?.civilite+" "+rs?.user?.nom,
+                                            topOffset: 50
+                                        })
+                                    }
+                                )
+                            }
+                        )
+                    }
+                    setLoading(false)
                 }
-            )
+            ).catch(()=>{
+                Toast.show({
+                    text1: "Attention", text2: "Vérifier vos identifiants ",
+                    topOffset: 50, type: "error"
+                })
+            })
         }else{
             setMessage("veuillez saisir les données")
         }
@@ -63,9 +92,9 @@ export default function Login(){
             width: 150, height: 150,
         },
         head:{
-            alignItems: "center", margin: 15
+            alignItems: "center", margin: 45
         },
-        input:{backgroundColor: chart, marginLeft: 30, marginRight: 30, marginTop: 20, borderRadius: 30},
+        input:{ marginLeft: 30, marginRight: 30, marginTop: 20, borderRadius: 30},
         btn:{
             backgroundColor: "green", padding: 10, borderRadius: 5, margin: 30, display: "flex", flexDirection: "row", 
             justifyContent: "space-around", alignItems: "center", marginLeft: 70, marginRight: 70,
@@ -86,29 +115,28 @@ export default function Login(){
             <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
                 <SafeAreaView >
                     <View style={style.head}>
-                        <Text style={style.title}>Bienvenue</Text>
                         <Lottie source={{uri: "https://assets9.lottiefiles.com/packages/lf20_pk7nnxpm.json"}} autoPlay loop style={style.lotti} />
                     </View>
 
                     <Text style={{color: "red", textAlign: "center", marginTop: 20}}>{message}</Text>
 
                     <View>
-                        <TextInput placeholder={"email"} leading={<Ionicons name="at-circle-sharp" size={20} color={front} />} 
-                            {...props} textContentType="emailAddress" onChangeText={setMail} 
+                        <TextInput placeholder={"email"} leading={<Ionicons name="at-circle-sharp" size={20} color={"green"} />} 
+                            {...props} textContentType="emailAddress" onChangeText={setMail} inputStyle={{color:"black"}}
                         />
 
-                        <TextInput placeholder={"password"} leading={<Ionicons name="key-sharp" size={20} color={front} />}
+                        <TextInput placeholder={"password"} leading={<Ionicons name="key-sharp" size={20} color={"green"} />}
                             secureTextEntry={secure}  textContentType="password"
-                            onChangeText={setPassword} {...props}
+                            onChangeText={setPassword} {...props} inputStyle={{color:"black"}}
                             trailing={<TouchableOpacity onPress={()=>setSecure(!secure)}>
-                                <Ionicons name="eye" size={20} color={front} />
+                                <Ionicons name="eye" size={20} color={"green"} />
                             </TouchableOpacity>} 
                         />
 
-                        <TouchableOpacity style={style.btn} onPress={handleLogin}>
+                        {loading ? <ActivityIndicator color={chart} size={"small"} /> : <TouchableOpacity style={style.btn} onPress={handleLogin}>
                             <Text style={[style.text,{color: "white"}]}>connexion</Text>
                             <Ionicons name="log-in" size={30} color={"white"} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
                     </View>
                     <TouchableOpacity style={style.bottom}>

@@ -1,15 +1,18 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Platform } from "react-native";
 import { HomeStack } from './stack';
 import img from "../../assets/icon.png"
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "react-native-paper";
 import { VERSION } from "../api/constante";
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { storeString } from "../redux/storage";
+import { storeObject } from "../redux/storage";
 import { useNavigation } from "@react-navigation/native";
+import { API, API2, Get, Remove, Send, Update } from "../api/service";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Issu from "../views/security/issu";
 
 const Drawer = createDrawerNavigator()
 
@@ -18,23 +21,77 @@ const Drawer = createDrawerNavigator()
 function Menu(props){
   const back = useSelector((state)=>state.themeReducer.back)
   const dispatch = useDispatch()
-  const profil = useSelector((state)=>state.userReducer.profil)
-  const nav= useNavigation()
-  const [image, setImage] = useState(profil);
+  //const profil = useSelector((state)=>state.userReducer.profil)
+  const user = useSelector((state)=>state.userReducer.user);
+  const token= useSelector((state)=> state.userReducer.token);
+  const nav= useNavigation();
+  const [insc, setInsc]= useState(null);
  
-
-  useMemo(() => setImage(profil), [profil])
+  useMemo(() => {
+    if(user?.type==="Eleve"){
+      Get("/inscription/all/eleve/"+user?._id, token).then(
+        (rp)=>{
+          if(!rp?.error){
+            const s= rp?.inscriptions.length 
+            setInsc(rp?.inscriptions[s])
+          }else{
+            Toast.show({
+              text1: "erreur", text2: "erreur de récupération des inscriptions",
+              topOffset: 50, type:"error"
+            })
+          }
+        }
+      ).catch(()=>{});
+    }
+  }, [])
 
   function handleReport(){
-    //nav.navigate("profile")
+    nav.navigate("issu", {back: true});
   }
 
-  function saveImg(img){
-    const action= {
-      type: "profil", value: img
-    }
-    storeString("profil", img).then(()=>{
-      dispatch(action)
+  function upd(data){
+    Update("/user/update", data, true, token).then(
+      (rp)=>{
+        if(rp?.error){
+          Toast.show({
+            text1: "erreur", text2: "la mise à jour du profil a échoué",
+            topOffset: 50, type:"error"
+          })
+        }else{
+          const val= {user: rp?.user, token: token}
+          storeObject("login", val).then(
+            ()=>{
+              const action={type: "login", value: val}
+              dispatch(action)
+              Toast.show({
+                text1: "message", text2: "Image mise à jour",
+                topOffset: 50
+              })
+            }
+          )
+        }
+      }
+    ).catch(()=>{
+
+    })
+  }
+
+  function handleSave(form){
+    Send("/document/new", form, false, token).then(
+      (r)=>{
+        if(!r?.error){
+          const use3= {...user, photo: r?.document?._id}
+          upd(use3)
+        }else{
+          if(r?.error?.includes("errMongoServerError")){
+            Toast.show({
+              text1: "erreur", text2: "cette image est déjà en profil.", topOffset: 50
+            })
+          }
+        }
+      }
+    ).catch((err)=>{
+      console.log("--"+err);
     })
   }
 
@@ -45,86 +102,79 @@ function Menu(props){
       quality: 1,
     }, (rep)=>{
       if(!rep?.didCancel){
-        //console.log(rep.assets[0].uri);
-        saveImg(rep.assets[0].uri)
-        setImage(rep.assets[0].uri)
+        const result= rep.assets[0]
+        Toast.show({
+          text1: "message", text2: "Mise à jour de l'image en cours!", topOffset: 50
+        })
+        let file={
+          name: result?.fileName,
+          type: result?.type,
+          uri: Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri,
+        }
+        let doc2= { type: "personnel",  user: user?._id, label: "profil"}
+        const form= new FormData();
+        form.append("document", JSON.stringify(doc2));
+        form.append("file", file);
+        if(user?.photo){
+          Remove("/document/delete/"+user?.photo?.libelle, token).then(
+            (re)=>{
+              if(!re?.error){
+                handleSave(form)
+              } 
+            }
+          )
+        }else{
+          handleSave(form)
+        }
+        //saveImg(rep.assets[0].uri)
       }
     });
-
-    //console.log(image);
-
   }
 
   const style= StyleSheet.create({
     content: {
-      flex: 1,
-      backgroundColor: "skyblue",
-      //paddingTop: 10
+      flex: 1, backgroundColor: "skyblue"
     },
     imgcontainer: {
-      alignItems: "center",
-      marginBottom: 20,
-      marginTop: 20,
+      alignItems: "center", marginBottom: 20, marginTop: 20,
     },
     img:{
-      width: "60%",
-      height: 150,
-      borderRadius: 50
+      width: "60%", height: 150, borderRadius: 50
     },
     text: {
-      fontSize: 18,
-      color: back,
-      textAlign: "center"
+      fontSize: 18, color: back, textAlign: "center"
     },
     title: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: back,
-      textAlign: "center"
+      fontSize: 20, fontWeight: "bold", color: back, textAlign: "center"
     },
     button: {
       backgroundColor: "orange",
-      padding: 10,
-      borderRadius: 10,
-      position: "absolute",
-      bottom: -10
+      padding: 10, borderRadius: 10, position: "absolute", bottom: -10
     },
     block: {
-      margin: 10,
-      alignItems: "center"
+      margin: 10, alignItems: "center"
     },
     divider :{
-      height: 1,
-      width: "90%",
-      backgroundColor: back,
-      alignItems: "center",
-      //margin: 20
+      height: 1, width: "90%", backgroundColor: back, alignItems: "center",
     },
     bottom: {
-      position: "absolute",
-      bottom: 0,
-      right: 10,
-      left: 10
+      position: "absolute", bottom: 0, right: 10, left: 10
     },
     btn:{
-      display:"flex",
-      flexDirection: "row",
-      backgroundColor: "red",
-      justifyContent: "space-around",
-      alignItems: "center",
-      padding: 10,
-      margin :10
+      display:"flex", flexDirection: "row", backgroundColor: "red",
+      justifyContent: "space-around", alignItems: "center",
+      padding: 10, margin :10
     }
   })
 
   return (
     <SafeAreaView style={style.content}>
       <View style={style.block}>
-        <Text style={style.title}>Yameogo Wendyam Ivan</Text>
+        <Text style={style.title}>{user?.nom +" "+ user?.prenom}</Text>
       </View>
 
       <View style={style.imgcontainer}>
-        <Image source={image ? { uri: image } : img} style={style.img}  />
+        <Image source={user?.photo ? { uri: API2+"/document/show/"+user?.photo?.libelle } : img} style={style.img}  />
         <TouchableOpacity onPress={pickImage} style={style.button}>
           <Text style={style.text}>mettre à jour</Text>
         </TouchableOpacity>
@@ -135,35 +185,39 @@ function Menu(props){
       </View>
 
       <Text style={style.title}>Adresse mail:</Text>
-      <Text style={style.text}>yameogoivan10@gmail.com</Text>
+      <Text style={style.text}>{user?.mail}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
       </View>
 
       <Text style={style.title}>Numéro de téléphone:</Text>
-      <Text style={style.text}>+221 77 359 55 96</Text>
+      <Text style={style.text}>{user?.telephone}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
       </View>
 
       <Text style={style.title}>Adresse domicile:</Text>
-      <Text style={style.text}>Zone 1</Text>
+      <Text style={style.text}>{user?.localisation}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
       </View>
 
-      <Text style={style.title}>Classe:</Text>
-      <Text style={style.text}>Tle</Text>
+      {
+        user?.type==="Eleve" && <View>
+          <Text style={style.title}>Classe:</Text>
+          <Text style={style.text}>{insc?.classe}</Text>
 
-      <View style={style.block}>
-        <Divider style={style.divider} />
-      </View>
+          <View style={style.block}>
+            <Divider style={style.divider} />
+          </View>
+        </View>
+      }
 
       <Text style={style.title}>Année scolare:</Text>
-      <Text style={style.text}>2023-2024</Text>
+      <Text style={style.text}>{user?.ecole?.anneeScolaire}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
@@ -187,6 +241,7 @@ const LeftDrawer = () => {
   return (
     <Drawer.Navigator screenOptions={{headerShown: false}} drawerContent={(props)=> <Menu {...props} />}>
       <Drawer.Screen name="H" component={HomeStack} />
+      <Drawer.Screen name="issu" component={Issu} />
     </Drawer.Navigator>
   );
 };

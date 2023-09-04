@@ -7,24 +7,21 @@ import { useSelector } from "react-redux";
 
 export default function NoLoggedHeader({handleTheme, goBack, show=true}){
 
-    const back= useSelector((state)=>state.themeReducer.back)
-    const front= useSelector((state)=>state.themeReducer.front)
+    const back= useSelector((state)=>state.themeReducer.back);
+    const front= useSelector((state)=>state.themeReducer.front);
     const nav=  useNavigation()
 
     function handleLoginPage(){
-        nav.navigate("login")
+        nav.navigate("login");
     }
 
 
     const style= StyleSheet.create({
         content:{
             //position: "absolute",
-            display: "flex",
-            flexDirection: "row",
+            display: "flex", flexDirection: "row",
             justifyContent: "space-between",
-            margin: 5,
-            padding: 10,
-            alignItems: "center"
+            margin: 5, padding: 10, alignItems: "center"
         }
     })
 

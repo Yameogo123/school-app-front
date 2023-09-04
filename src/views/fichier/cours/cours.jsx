@@ -6,23 +6,26 @@ import { useSelector } from "react-redux";
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "@react-native-material/core";
+import { Get } from "../../../api/service";
 
 export default function Cours() {
     
-    const front= useSelector((state)=>state.themeReducer.front)
-    const back= useSelector((state)=>state.themeReducer.back)
-    const chart= useSelector((state)=>state.themeReducer.chart)
-    const nav=  useNavigation()
-    const [matieres, setMatieres]= useState([
-        {id: 1, libelle: "mathématiques"},{id: 2, libelle: "P-C"}, 
-        {id: 3, libelle: "latin"}
-    ])
+    const front= useSelector((state)=>state.themeReducer.front);
+    const back= useSelector((state)=>state.themeReducer.back);
+    const chart= useSelector((state)=>state.themeReducer.chart);
+    const nav=  useNavigation();
+    const [matieres, setMatieres]= useState([]);
+
+    const token= useSelector((state)=> state.userReducer.token);
+    const user= useSelector((state)=> state.userReducer.user);
+    const loading= useSelector((state)=>state.userReducer.loading);
+
     const [filtre, setFilter] = useState('');
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        {label: 'ordre croissant', value: 'ascendant'},
-        {label: 'ordre décroissant', value: 'descendant'},
+        {id: 1, label: 'ordre croissant', value: 'ascendant'},
+        {id: 2, label: 'ordre décroissant', value: 'descendant'},
     ]);
 
     useEffect(() => {
@@ -61,7 +64,18 @@ export default function Cours() {
 
     useMemo(() => {
         order()
-    }, [value])
+    }, [value]);
+
+    useMemo(()=>{
+        setMatieres([])
+        Get("/cours/all/ecole/"+user?.ecole?._id, token).then(
+            (rs)=>{
+                if(!rs?.error){
+                    setMatieres(rs?.cours);
+                }
+            }
+        ).catch(()=>{})
+    }, [loading]);
 
     function LibelleFilter(){
         const props={
@@ -90,7 +104,7 @@ export default function Cours() {
     }
 
     function Card({item}){
-        return (<TouchableOpacity style={[style.card,{justifyContent: "space-between"}]}>
+        return (<TouchableOpacity key={Math.floor(Math.random() * 100)} style={[style.card,{justifyContent: "space-between"}]} onPress={()=>nav.navigate("cours/liste", {cours: item?._id})}>
             <View style={[style.card, {borderWidth:0}]}>
                 <Ionicons name="folder" size={30} color={"skyblue"} />
                 <Text style={style.info}>{item.libelle}</Text>
@@ -107,11 +121,13 @@ export default function Cours() {
                     <DropDown />
                 </View>
                 <View style={{ zIndex : -1, marginBottom: 120 }}>
-                    <FlatList showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} scrollEnabled={matieres.length >=7} 
-                        contentContainerStyle={style.flat} data={matieres.filter((mat)=>mat.libelle.toLowerCase().includes(filtre.toLowerCase()))} 
-                        keyExtractor={({item, index})=> index}
-                        renderItem={({item, index})=> {
-                            return <Card item={item} key={index} />
+                    <FlatList key={"flat"} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} scrollEnabled={matieres.length >=7} 
+                        contentContainerStyle={style.flat} data={matieres?.filter((mat)=>mat?.libelle?.toLowerCase().includes(filtre?.toLowerCase()))} 
+                        //keyExtractor={({index, item})=> index}
+                        renderItem={({index, item})=> {
+                            return (
+                                <Card item={item} />
+                            );
                         }}
                     />
                 </View>
