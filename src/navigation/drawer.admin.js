@@ -29,6 +29,7 @@ import Impaye from "../views/admin/comptabilite/impaye";
 import Coefficient from "../views/admin/gestion/coefficient";
 import Bulletin from "../views/admin/pedagogie/bulletin";
 import Orientation from "../views/admin/gestion/orientation";
+import { useTranslation } from "react-i18next";
 
 const Drawer = createDrawerNavigator()
 const iconSize= 18;
@@ -39,6 +40,13 @@ function Menu(props){
     const nav= useNavigation();
     const route= useRoute();
     const [page, setPage]= useState("admin");
+    const {t, _}=useTranslation();
+
+
+    useEffect(()=>{
+        //console.log(nav.isFocused());
+        //setPage("admin")
+    }, [])
 
     const allowed= ["Directeur", "Secretaire"];
  
@@ -88,9 +96,9 @@ function Menu(props){
                    
                 </View>
                 
-                <TouchableOpacity style={{marginTop: 30, marginBottom: 15, flexDirection: "row", backgroundColor: page==="admin" ? "blue": "skyblue", borderRadius: 20, padding: 5}} onPress={()=>{nav.navigate("admin"); setPage("admin")}}>
+                <TouchableOpacity style={{marginTop: 30, marginBottom: 15, flexDirection: "row", backgroundColor: page==="admin" ? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=>{nav.navigate("admin"); setPage("admin")}}>
                     <Ionicons name="home" color={back} size={iconSize} />
-                    <Text style={style.title}>Acceuil</Text>
+                    <Text style={style.title}>{t('bottom2')}</Text>
                 </TouchableOpacity>
 
                 <View style={style.block}>
@@ -104,11 +112,11 @@ function Menu(props){
                             <Ionicons name="reader" color={back} size={iconSize} />
                             <Text style={style.title}>Inscription:</Text>
                         </View>
-                        <TouchableOpacity style={{backgroundColor: page==="inscription/add"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=>{nav.navigate("inscription/add"); setPage("inscription/add")}}>
-                            <Text style={style.text}>Ajouter</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="inscription/add"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=>{nav.navigate("inscription/add"); setPage("inscription/add")}}>
+                            <Text style={style.text}>{t('drawer1')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="inscription/annuler"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("inscription/annuler"); setPage("inscription/annuler")}}>
-                            <Text style={style.text}>Annuler</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="inscription/annuler"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("inscription/annuler"); setPage("inscription/annuler")}}>
+                            <Text style={style.text}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         
                         <View style={style.block}>
@@ -119,11 +127,11 @@ function Menu(props){
                             <Ionicons name="people" color={back} size={iconSize} />
                             <Text style={style.title}>User:</Text>
                         </View>
-                        <TouchableOpacity style={{backgroundColor: page==="user/add"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("user/add"); setPage("user/add")}}>
-                            <Text style={style.text}>Ajouter</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="user/add"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("user/add"); setPage("user/add")}}>
+                            <Text style={style.text}>{t('drawer1')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="user/supprimer"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("user/supprimer"); setPage("user/supprimer")}}>
-                            <Text style={style.text}>Supprimer</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="user/supprimer"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("user/supprimer"); setPage("user/supprimer")}}>
+                            <Text style={style.text}>{t('drawer2')}</Text>
                         </TouchableOpacity>
 
                         <View style={style.block}>
@@ -132,17 +140,17 @@ function Menu(props){
 
                         <View style={{flexDirection: "row"}}>
                             <Ionicons name="school" color={back} size={iconSize} />
-                            <Text style={style.title}>Pédagogie:</Text>
+                            <Text style={style.title}>{t('drawer3')}:</Text>
                         </View>
-                        <TouchableOpacity style={{backgroundColor: page==="planifier"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("planifier"); setPage("planifier")}}>
-                            <Text style={style.text}>planification</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="planifier"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("planifier"); setPage("planifier")}}>
+                            <Text style={style.text}>{t('drawer4')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="notifier" ? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("notifier"); setPage("notifier")}}>
+                        <TouchableOpacity style={{backgroundColor: page==="notifier" ? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("notifier"); setPage("notifier")}}>
                             <Text style={style.text}>notification</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="bulletin" ? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("bulletin"); setPage("bulletin")}}>
+                        {/* <TouchableOpacity style={{backgroundColor: page==="bulletin" ? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("bulletin"); setPage("bulletin")}}>
                             <Text style={style.text}>bulletin</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
 
                         <View style={style.block}>
@@ -152,28 +160,28 @@ function Menu(props){
                 
                         <View style={{flexDirection: "row"}}>
                             <Ionicons name="add-circle" color={back} size={iconSize} />
-                            <Text style={style.title}>Gestion:</Text>
+                            <Text style={style.title}>{t('drawer5')}:</Text>
                         </View>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/absence"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/absence"); setPage("admin/absence")}}>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/absence"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/absence"); setPage("admin/absence")}}>
                             <Text style={style.text}>absences</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/classe"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/classe"); setPage("admin/classe")}}>
-                            <Text style={style.text}>classes</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/classe"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/classe"); setPage("admin/classe")}}>
+                            <Text style={style.text}>{t('drawer6')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/cours"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/cours"); setPage("admin/cours")}}>
-                            <Text style={style.text}>cours</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/cours"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/cours"); setPage("admin/cours")}}>
+                            <Text style={style.text}>{t('drawer7')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/coefficient"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/coefficient"); setPage("admin/coefficient")}}>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/coefficient"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/coefficient"); setPage("admin/coefficient")}}>
                             <Text style={style.text}>coefficients</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/note"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/note"); setPage("admin/note")}}>
-                            <Text style={style.text}>notes</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/note"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/note"); setPage("admin/note")}}>
+                            <Text style={style.text}>{t('drawer8')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="admin/orientation"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/orientation"); setPage("admin/orientation")}}>
+                        <TouchableOpacity style={{backgroundColor: page==="admin/orientation"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/orientation"); setPage("admin/orientation")}}>
                             <Text style={style.text}>orientation</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor: page==="salle"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("salle"); setPage("salle")}}>
-                            <Text style={style.text}>Salles</Text>
+                        <TouchableOpacity style={{backgroundColor: page==="salle"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("salle"); setPage("salle")}}>
+                            <Text style={style.text}>{t('drawer9')}</Text>
                         </TouchableOpacity>
 
                         <View style={style.block}>
@@ -186,13 +194,13 @@ function Menu(props){
                     user?.type!=="Professeur" && <View>
                         <View style={{flexDirection: "row"}}>
                             <Ionicons name="cash" color={back} size={iconSize} />
-                            <Text style={style.title}>Comptabilité:</Text>
+                            <Text style={style.title}>{t("drawer10")}:</Text>
                         </View>
-                        { user?.type==="Eleve" && <TouchableOpacity style={{backgroundColor: page==="admin/reglement"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/reglement"); setPage("admin/reglement")}}>
-                            <Text style={style.text}>Règlement</Text>
+                        { user?.type==="Eleve" && <TouchableOpacity style={{backgroundColor: page==="admin/reglement"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/reglement"); setPage("admin/reglement")}}>
+                            <Text style={style.text}>{t("drawer13")}</Text>
                         </TouchableOpacity>}
-                        { allowed?.includes(user?.type) && <TouchableOpacity style={{backgroundColor: page==="admin/rapport"? "blue": "skyblue", borderRadius: 25, padding: 5}} onPress={()=> {nav.navigate("admin/rapport"); setPage("admin/rapport")}}>
-                            <Text style={style.text}>Rapport</Text>
+                        { allowed?.includes(user?.type) && <TouchableOpacity style={{backgroundColor: page==="admin/rapport"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=> {nav.navigate("admin/rapport"); setPage("admin/rapport")}}>
+                            <Text style={style.text}>{t("drawer11")}</Text>
                         </TouchableOpacity>}
 
                         <View style={style.block}>
@@ -205,7 +213,7 @@ function Menu(props){
             <View style={style.bottom}>
                 <TouchableOpacity style={style.btn} onPress={handleReport}>
                     <Ionicons name="information-circle" color={back} size={20} />
-                    <Text style={style.text}>Reporter un souci ?</Text>
+                    <Text style={style.text}>{t("drawer12")} ?</Text>
                 </TouchableOpacity>
                 <Text style={[style.text, {textAlign: "center"}]}>{VERSION}</Text>
             </View>

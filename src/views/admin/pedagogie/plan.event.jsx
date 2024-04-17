@@ -29,12 +29,8 @@ export default function PlanEvent(){
     const [salle, setSalle]= useState(null)
 
     const [open, setOpen]= useState(false);
-    const [open1, setOpen1]= useState(false);
     const [open2, setOpen2]= useState(false);
-    const [open3, setOpen3]= useState(false);
 
-    const [item, setItem]= useState(null);
-    const [item1, setItem1]= useState(null);
     const [item2, setItem2]= useState(null);
 
     const nav=  useNavigation();
@@ -42,6 +38,8 @@ export default function PlanEvent(){
     const [jour, setJour] = useState(new Date());
     const [debut, setDebut] = useState(new Date());
     const [fin, setFin] = useState(moment().add(1, "hour").toDate());
+
+    const [isSending, setIsSending]= useState(false);
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
@@ -96,6 +94,7 @@ export default function PlanEvent(){
 
     function handleValider(){
         if(classe.length!==0 & salle !==null & libelle!==null){
+            setIsSending(true);
             const titre= libelle
             const summary= "salle "+item2?.libelle
             const start= moment(jour).format("YYYY-MM-DD")+" "+moment(debut).format("hh:mm:ss")
@@ -121,11 +120,10 @@ export default function PlanEvent(){
                 }
             ).catch(()=>{
                 Toast.show({
-                    text1: "erreur",
-                    text2: "erreur de programmation d'évènement",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "erreur de programmation d'évènement", topOffset: 50, type:"error"
                 })
             })
+            setIsSending(false)
         }else{
             Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
         }
@@ -175,7 +173,7 @@ export default function PlanEvent(){
                             <DropDownPicker placeholder="Veuillez choisir" 
                                 open={open} value={classe} items={adaptSelect(classes)}
                                 setOpen={setOpen} setValue={setClasse} searchable maxHeight={250}
-                                setItems={setClasses} multiple mode="BADGE"
+                                setItems={setClasses} multiple mode="BADGE" listMode="SCROLLVIEW"
                                 badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                             />
                         </View>
@@ -185,7 +183,7 @@ export default function PlanEvent(){
                             <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem2}
                                 open={open2} value={salle} items={adaptSelect(salles)}
                                 setOpen={setOpen2} setValue={setSalle} searchable
-                                setItems={setSalles} maxHeight={150}
+                                setItems={setSalles} maxHeight={150} listMode="SCROLLVIEW"
                                 badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                             />
                         </View>
@@ -228,7 +226,7 @@ export default function PlanEvent(){
                     </View>
 
                     <View style={[style.block, {zIndex: 1}]}>
-                        <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 20}]}>
+                        <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 20}]}>
                             <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
                         </TouchableOpacity>
                     </View>

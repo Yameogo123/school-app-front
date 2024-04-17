@@ -10,9 +10,10 @@ import { VERSION } from "../api/constante";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { storeObject } from "../redux/storage";
 import { useNavigation } from "@react-navigation/native";
-import { API, API2, Get, Remove, Send, Update } from "../api/service";
+import { API, Get, Remove, Send, Update } from "../api/service";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Issu from "../views/security/issu";
+import { useTranslation } from "react-i18next";
 
 const Drawer = createDrawerNavigator()
 
@@ -26,6 +27,7 @@ function Menu(props){
   const token= useSelector((state)=> state.userReducer.token);
   const nav= useNavigation();
   const [insc, setInsc]= useState(null);
+  const {t, _}=useTranslation();
  
   useMemo(() => {
     if(user?.type==="Eleve"){
@@ -174,9 +176,9 @@ function Menu(props){
       </View>
 
       <View style={style.imgcontainer}>
-        <Image source={user?.photo ? { uri: API2+"/document/show/"+user?.photo?.libelle } : img} style={style.img}  />
+        <Image source={user?.photo ? { uri: API+"/document/show/"+user?.photo?.libelle } : img} style={style.img}  />
         <TouchableOpacity onPress={pickImage} style={style.button}>
-          <Text style={style.text}>mettre à jour</Text>
+          <Text style={style.text}>{t('drawer14')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -184,21 +186,21 @@ function Menu(props){
         <Divider style={style.divider} />
       </View>
 
-      <Text style={style.title}>Adresse mail:</Text>
+      <Text style={style.title}>{t('drawer15')}:</Text>
       <Text style={style.text}>{user?.mail}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
       </View>
 
-      <Text style={style.title}>Numéro de téléphone:</Text>
+      <Text style={style.title}>{t('drawer16')}:</Text>
       <Text style={style.text}>{user?.telephone}</Text>
 
       <View style={style.block}>
         <Divider style={style.divider} />
       </View>
 
-      <Text style={style.title}>Adresse domicile:</Text>
+      <Text style={style.title}>{t('drawer17')}:</Text>
       <Text style={style.text}>{user?.localisation}</Text>
 
       <View style={style.block}>
@@ -207,7 +209,7 @@ function Menu(props){
 
       {
         user?.type==="Eleve" && <View>
-          <Text style={style.title}>Classe:</Text>
+          <Text style={style.title}>{t('drawer20')}:</Text>
           <Text style={style.text}>{insc?.classe}</Text>
 
           <View style={style.block}>
@@ -216,7 +218,7 @@ function Menu(props){
         </View>
       }
 
-      <Text style={style.title}>Année scolare:</Text>
+      <Text style={style.title}>{t('drawer18')}:</Text>
       <Text style={style.text}>{user?.ecole?.anneeScolaire}</Text>
 
       <View style={style.block}>
@@ -226,7 +228,7 @@ function Menu(props){
       <View style={style.bottom}>
         <TouchableOpacity style={style.btn} onPress={handleReport}>
           <Ionicons name="information-circle" color={back} size={20} />
-          <Text style={style.text}>Reporter un souci ?</Text>
+          <Text style={style.text}>{t("drawer19")} ?</Text>
         </TouchableOpacity>
         <Text style={style.text}>{VERSION}</Text>
       </View>

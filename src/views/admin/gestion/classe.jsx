@@ -50,29 +50,23 @@ export default function Classe(){
         Alert.alert("validation", "voulez vous vraiment supprimer cette classe", [
             {text:"annuler"},
             {text: "continuer", onPress: ()=>{
-                setLibelle("..")
+                setLibelle("..");
                 Remove("/classe/"+id, token).then(
                     (rs)=>{
                         if(rs.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "la suppression a échoué",
-                                topOffset: 50, type:"error"
+                                text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message",
-                                text2: "classe bien supprimé",
-                                topOffset: 50
+                                text1: "message", text2: "classe bien supprimé", topOffset: 50
                             })
-                            setLibelle("")
+                            setLibelle("");
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "la suppression a échoué",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -86,9 +80,7 @@ export default function Classe(){
                 const exist= tbData.find((val)=> val?.libelle=== text)!==undefined
                 if(exist){
                     Toast.show({
-                        text1: "erreur",
-                        text2: "cette salle existe déjà",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "cette salle existe déjà", topOffset: 50, type:"error"
                     })
                 }else{
                     setLibelle("..")

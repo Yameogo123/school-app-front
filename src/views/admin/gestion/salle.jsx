@@ -27,6 +27,8 @@ export default function Salle(){
     const [tbHead, setTbHead]= useState(["libellé", "edit", "action"]);
     const [tbData, setTbData]= useState([]);
 
+    const [isSending, setIsSending]= useState(false);
+
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
@@ -51,26 +53,26 @@ export default function Salle(){
             <RNModal
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
-                    <View>
-                        <View style={style.block}>
-                            <TextInput placeholder={"saisir un libelle"} inputStyle={{color:"black"}} onChangeText={setLibelle}
-                                {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
-                            />
+                <View>
+                    <View style={style.block}>
+                        <TextInput placeholder={"saisir un libelle"} inputStyle={{color:"black"}} onChangeText={setLibelle}
+                            {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
+                        />
+                    </View>
+                    <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+                        <View >
+                            <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red"}]}>
+                                <Text style={style.text}>Annuler</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
-                            <View >
-                                <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                    <Text style={style.text}>Annuler</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View >
-                                <TouchableOpacity onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
-                                    <Text style={style.text}>Ajouter</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View >
+                            <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
+                                <Text style={style.text}>Ajouter</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-             </RNModal>
+                </View>
+            </RNModal>
         );
     }
 
@@ -83,24 +85,18 @@ export default function Salle(){
                     (rs)=>{
                         if(rs.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "la suppression a échoué",
-                                topOffset: 50, type:"error"
+                                text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message",
-                                text2: "salle bien supprimée",
-                                topOffset: 50
+                                text1: "message", text2: "salle bien supprimée", topOffset: 50
                             })
                             setLibelle("")
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "la suppression a échoué",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -111,34 +107,31 @@ export default function Salle(){
         const exist= tbData.find((val)=> val?.libelle=== libelle)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur",
-                text2: "cette salle existe déjà",
-                topOffset: 50, type:"error"
+                text1: "erreur", text2: "cette salle existe déjà", topOffset: 50, type:"error"
             })
         }else{
+            setIsSending(true)
             Send("/salle/new", {"salle": {"libelle": libelle, ecole: user?.ecole?._id}}, true, token).then(
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur",
-                            text2: "erreur d'ajout de salle",
-                            topOffset: 50, type:"error"
+                            text1: "erreur", text2: "erreur d'ajout de salle", topOffset: 50, type:"error"
                         })
                     }else{
                         Toast.show({
-                            text1: "message",
-                            text2: "salle bien ajoutée",
-                            topOffset: 50
+                            text1: "message", text2: "salle bien ajoutée", topOffset: 50
                         })
                         setLibelle("")
                         setShow(false)
                     }
+                    setIsSending(false)
                 }
             ).catch(()=>{
                 Toast.show({
                     text1: "erreur", text2: "erreur d'ajout de salle",
                     topOffset: 50, type:"error"
                 })
+                setIsSending(false)
             })
         }
     }

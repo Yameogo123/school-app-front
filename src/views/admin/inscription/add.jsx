@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import AdminHeader from "../../../template/header/adminHeader";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -32,6 +32,8 @@ export default function AddInscription(){
     const [open, setOpen]= useState(false);
     const [open1, setOpen1]= useState(false);
     const [open2, setOpen2]= useState(false);
+
+    const [isSending, setIsSending]= useState(false);
 
     const nav=  useNavigation();
 
@@ -93,12 +95,12 @@ export default function AddInscription(){
                     topOffset: 50, type:"error"
                 })
             }else{
+                setIsSending(true);
                 Send("/inscription/new", {"inscription": inscrip}, true, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "erreur de modification de classe",
+                                text1: "erreur", text2: "erreur de modification de classe",
                                 topOffset: 50, type:"error"
                             })
                         }else{
@@ -107,12 +109,13 @@ export default function AddInscription(){
                             })
                             setClasse(null); setEleve(null); setReglement(null);
                         }
+                        setIsSending(false)
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "erreur de modification de classe",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "erreur de modification de classe", topOffset: 50, type:"error"
                     })
+                    setIsSending(false);
                 })
             }
         }else{
@@ -123,15 +126,16 @@ export default function AddInscription(){
 
     const style= StyleSheet.create({
         container: {
-            flex: 1, backgroundColor: back
+            //flex: 1, 
+            backgroundColor: back
         },
         head:{
             margin: 15, padding: 10, paddingTop: 20, paddingBottom: 20
         },
         title:{fontWeight: "bold", fontSize: 25, padding: 5},
         text:{fontSize: 15, padding: 5, fontStyle: "italic", color: back},
-        part2:{borderTopLeftRadius: 50, backgroundColor: chart, flex:1},
-        block:{marginLeft: 20, padding: 10, marginRight: 20, marginTop: 20},
+        part2:{borderTopLeftRadius: 50, backgroundColor: chart, height: 600},
+        block:{marginLeft: 20, padding: 15, marginRight: 20, marginTop: 10},
         btn: {shadowColor: "black", shadowOffset: {width: 0.5, height: 1}, shadowOpacity: 0.4, shadowRadius: 20}
     })
 
@@ -141,66 +145,67 @@ export default function AddInscription(){
     }
 
     return (
-        <KeyboardAvoidingView style={style.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                <View style={style.container}>
-                    <View style={style.head}>
-                        <Text style={style.title}>Nouvelle inscription</Text>
-                        <Text style={[style.text, {color: front}]}>Veuillez remplir toutes les étapes</Text>
-                    </View>
-
-                    <View style={style.part2}>
-
-                        <View style={[style.block, {zIndex: 5}]}>
-                            <Text style={style.text}>Quelle élève ? </Text>
-                            <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
-                                open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
-                                setOpen={setOpen1} setValue={setEleve} maxHeight={150}
-                                setItems={setEleves} //theme="DARK"
-                                //mode="BADGE"
-                                badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                            />
+        
+            //<TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+                    <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
+                        <View style={style.head}>
+                            <Text style={style.title}>Nouvelle inscription</Text>
+                            <Text style={[style.text, {color: front}]}>Veuillez remplir toutes les étapes</Text>
                         </View>
 
-                        <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
-                            <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                <Text style={style.text}>Quelle classe ? </Text>
+                        <View style={style.part2}>
+
+                            <View style={[style.block, {zIndex: 5}]}>
+                                <Text style={style.text}>Quelle élève ? </Text>
                                 <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
-                                    open={open} value={classe} items={adaptSelect(classes)}
-                                    setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
-                                    setItems={setClasses} //theme="DARK" 
+                                    open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
+                                    setOpen={setOpen1} setValue={setEleve} maxHeight={150} listMode="SCROLLVIEW"
+                                    setItems={setEleves} //theme="DARK"
                                     //mode="BADGE"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                 />
                             </View>
 
-                            <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                <Text style={style.text}>Montant payé </Text>
-                                <TextInput {...props} value={montant} onChangeText={setMontant} />
+                            <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
+                                <View style={[style.block, {zIndex: 4, width: "45%"}]}>
+                                    <Text style={style.text}>Quelle classe ? </Text>
+                                    <DropDownPicker placeholder="Veuillez choisir"
+                                        open={open} value={classe} items={adaptSelect(classes)}
+                                        setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
+                                        setItems={setClasses} listMode="SCROLLVIEW" 
+                                        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                    />
+                                </View>
+
+                                <View style={[style.block, {zIndex: 3, width: "45%"}]}>
+                                    <Text style={style.text}>Montant payé </Text>
+                                    <TextInput {...props} value={montant} onChangeText={setMontant} />
+                                </View>
                             </View>
-                        </View>
 
-                        <View style={[style.block, {zIndex: 2}]}>
-                            <Text style={style.text}>Type de règlement </Text>
-                            <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
-                                open={open2} value={reglement} items={adaptSelect(reglements)}
-                                setOpen={setOpen2} setValue={setReglement} maxHeight={100}
-                                setItems={setReglements} //theme="DARK"
-                                badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                            />
-                        </View>
+                            <View style={[style.block, {zIndex: 2}]}>
+                                <Text style={style.text}>Type de règlement </Text>
+                                <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    open={open2} value={reglement} items={adaptSelect(reglements)}
+                                    setOpen={setOpen2} setValue={setReglement} maxHeight={100}
+                                    setItems={setReglements} listMode="SCROLLVIEW" //theme="DARK"
+                                    badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                />
+                            </View>
 
-                        <View style={[style.block, {zIndex: 1}]}>
-                            <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
-                            </TouchableOpacity>
-                        </View>
+                            <View style={[style.block, {zIndex: 1}]}>
+                                <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                                    <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
+                                </TouchableOpacity>
+                            </View>
 
+                        </View>
                         
-                    </View>
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            //</TouchableWithoutFeedback>
+        
         
     )
 }

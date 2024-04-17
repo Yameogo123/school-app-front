@@ -42,6 +42,8 @@ export default function Absence(){
     const [open1, setOpen1]= useState(false);
     const [open2, setOpen2]= useState(false);
 
+    const [isSending, setIsSending]= useState(false);
+
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
         setDate(currentDate);
@@ -99,7 +101,7 @@ export default function Absence(){
                                     <Text style={style.text}>Quel élève ? </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
-                                        setOpen={setOpen1} setValue={setEleve} maxHeight={250}
+                                        setOpen={setOpen1} setValue={setEleve} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setEleves} //theme="DARK"
                                         //mode="BADGE"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -109,7 +111,7 @@ export default function Absence(){
                                     <Text style={style.text}>Quelle cours </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable
-                                        setOpen={setOpen2} setValue={setCour} maxHeight={250}
+                                        setOpen={setOpen2} setValue={setCour} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setCours} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
@@ -117,7 +119,7 @@ export default function Absence(){
                             </View>
 
                             <View style={[style.block, {alignItems:"flex-start"}]}>
-                                <Text style={style.text}>date du devoir  ? </Text>
+                                <Text style={style.text}>date du d'absence ? </Text>
                                 <DateTimePicker 
                                     value={date} mode={"date"} is24Hour={true}
                                     onChange={handleJour}
@@ -132,7 +134,7 @@ export default function Absence(){
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
+                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
                                         <Text style={style.text}>Ajouter</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -157,16 +159,14 @@ export default function Absence(){
                             });
                         }else{
                             Toast.show({
-                                text1: "message", text2: "absence bien supprimée",
-                                topOffset: 50
+                                text1: "message", text2: "absence bien supprimée", topOffset: 50
                             });
                             setStatus("");
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -188,6 +188,7 @@ export default function Absence(){
                     status: lb, ecole: user?.ecole?._id, date: dt, anneeScolaire: user?.ecole?.anneeScolaire,
                     user: eleve, cours: cour
                 }
+                setIsSending(true);
                 Send("/absence/new", {"absence": valeur}, true, token).then(
                     (rs)=>{
                         if(rs?.error){
@@ -195,13 +196,14 @@ export default function Absence(){
                                 text1: "erreur", text2: "erreur d'ajout d'absence",
                                 topOffset: 50, type:"error"
                             })
+                            setIsSending(false);
                         }else{
                             Toast.show({
                                 text1: "message", text2: "absence bien ajoutée",
                                 topOffset: 50
                             })
                             setStatus(""); setEleve(""); setCour("");
-                            setShow(false);
+                            setShow(false); setIsSending(false)
                         }
                     }
                 ).catch(()=>{
@@ -209,6 +211,7 @@ export default function Absence(){
                         text1: "erreur", text2: "erreur d'ajout de note",
                         topOffset: 50, type:"error"
                     })
+                    setIsSending(false);
                 })
             }
         }
@@ -223,8 +226,7 @@ export default function Absence(){
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "erreur de modification de l'absence",
+                                text1: "erreur", text2: "erreur de modification de l'absence",
                                 topOffset: 50, type:"error"
                             })
                         }else{
@@ -237,8 +239,7 @@ export default function Absence(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "erreur de modification de l'absence",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "erreur de modification de l'absence", topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -247,11 +248,11 @@ export default function Absence(){
         });
     }
 
-    const element = (id) => (
-        <TouchableOpacity onPress={() => handleRemove(id)} style={style.btn}>
-            <Ionicons name="trash" size={25} color={chart} />
-        </TouchableOpacity>
-    );
+    // const element = (id) => (
+    //     <TouchableOpacity onPress={() => handleRemove(id)} style={style.btn}>
+    //         <Ionicons name="trash" size={25} color={chart} />
+    //     </TouchableOpacity>
+    // );
 
     const element1 = (id) => (
        <View>
@@ -310,7 +311,7 @@ export default function Absence(){
                                         <TableWrapper key={Math.random()} style={style.row}>
                                             <Cell key={Math.random()} data={row?.user?.nom+" "+row?.user?.prenom} textStyle={style.text}/>
                                             <Cell key={Math.random()} data={row?.status} textStyle={style.text} style={{width: 90}} />
-                                            <Cell key={Math.random()} data={moment(row?.date).format("YYYY-MM-DD")} style={{width: 110}} textStyle={style.text}/>
+                                            <Cell key={Math.random()} data={moment(row?.date).format("YYYY-MM-DD")} style={{width: 80}} textStyle={style.text}/>
                                             <Cell key={Math.random()} data={element1(row?._id)} textStyle={style.text}/>
                                         </TableWrapper>
                                     )) 

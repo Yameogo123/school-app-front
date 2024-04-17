@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import LeftDrawer from './drawer';
 import AdminDrawer from './drawer.admin';
+import { useTranslation } from "react-i18next";
 
 
 const Tab = createBottomTabNavigator();
@@ -24,13 +25,13 @@ export default function BottomTab() {
     const back= useSelector((state)=>state.themeReducer.back)
     const front= useSelector((state)=>state.themeReducer.front)
     const chart= useSelector((state)=>state.themeReducer.chart)
+    const {t, _}=useTranslation()
 
 
     const getRouteName = (route)=>{
         const n= getFocusedRouteNameFromRoute(route) 
         return names.includes(n) ? "none": "flex"
     }
-
 
     let opt={
         tabBarActiveTintColor: back,
@@ -43,15 +44,11 @@ export default function BottomTab() {
         }
     }
 
-    let tstyle={
+    const tstyle={
         //backgroundColor: "transparent",
-        height: 100,
-        padding:10,
-        paddingBottom: 20,
-        shadowColor: 'black',
-        shadowOffset: {width: -2, height: -1},
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        height: 100, padding:10, paddingBottom: 20,
+        shadowColor: 'black', shadowOffset: {width: -2, height: -1},
+        shadowOpacity: 0.3, shadowRadius: 3,
     }
 
     return (
@@ -59,14 +56,13 @@ export default function BottomTab() {
             initialRouteName="Home"
             screenOptions={{
                 tabBarHideOnKeyboard: true,
-                tabBarStyle: tstyle,
-                headerShown: false
+                tabBarStyle: tstyle, headerShown: false
             }}
         >
             <Tab.Screen name="Forum" component={ForumStack} options={({ navigation, route }) =>({
                 //tabBarBadge:"...",
                 tabBarIcon: ({ color, size, focused }) => (
-                    <Ionicons name="md-chatbubbles" color={chart} size={focused? size+20 :size+5} />
+                    <Ionicons name="chatbubbles" color={chart} size={focused? size+20 :size+5} />
                 ),
                 ...opt,
                 tabBarStyle: {
@@ -87,7 +83,7 @@ export default function BottomTab() {
                         ...tstyle,
                         display: getRouteName(route)
                     },
-                    tabBarLabel: 'Fichier',
+                    tabBarLabel: t('bottom1'),
                     tabBarLabelStyle: {color: chart}
                 })} 
             />
@@ -102,7 +98,7 @@ export default function BottomTab() {
                         ...tstyle,
                         display: getRouteName(route)
                     },
-                    tabBarLabel: 'Acceuil',
+                    tabBarLabel:  t('bottom2'),
                     tabBarLabelStyle: {color: chart}
                 })} 
             />
@@ -117,7 +113,7 @@ export default function BottomTab() {
                         ...tstyle,
                         display: getRouteName(route)
                     },
-                    tabBarLabel: 'Paramètre',
+                    tabBarLabel:  t('bottom3'),
                     tabBarLabelStyle: {color: chart}
 
                 })} 

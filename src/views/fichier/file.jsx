@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, ScrollView } from "react-native";
 import FichierHeader from "../../template/header/fichierHeader";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import AnimatedLottieView from "lottie-react-native";
@@ -8,6 +8,7 @@ import { TextInput } from "@react-native-material/core";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 import { Get } from "../../api/service";
+import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory';
 
 
 export default function File() {
@@ -22,6 +23,8 @@ export default function File() {
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
 
+    const [isSending, setIsSending]= useState(false);
+
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
@@ -32,6 +35,7 @@ export default function File() {
     }, [])
 
     function handleSearch(){
+        setIsSending(true);
         Get("/document/all/search/"+user?.ecole?._id+"/"+search, token).then(
             (rs)=>{
                 //console.log(rs);
@@ -53,10 +57,10 @@ export default function File() {
             }
         ).catch(()=>{
             Toast.show({
-                text1: "erreur", text2: "problème de recherche!", type:"error",
-                topOffset: 60
+                text1: "erreur", text2: "problème de recherche!", type:"error", topOffset: 60
             })
         });
+        setIsSending(false);
     }
 
     const style = StyleSheet.create({
@@ -77,8 +81,8 @@ export default function File() {
     }
 
     return (
-        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
-            <View style={style.container}>
+        //<TouchableWithoutFeedback >
+            <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                 <View style={{alignItems: "center"}}>
                     <AnimatedLottieView speed={2} autoPlay autoSize loop source={{uri: "https://assets3.lottiefiles.com/private_files/lf30_gd2unfh8.json"}}
                         style={style.lottie}
@@ -88,7 +92,7 @@ export default function File() {
                 <TextInput 
                     leading={<Ionicons name="search" size={20} color={back} />} inputStyle={{color:"white"}}
                     onChangeText={setSearch} {...props} returnKeyLabel="recherche"
-                    trailing={<TouchableOpacity onPress={handleSearch}>
+                    trailing={<TouchableOpacity disabled={isSending} onPress={handleSearch}>
                         <Ionicons name="md-enter" size={25} color={back} />
                     </TouchableOpacity>} onSubmitEditing={handleSearch}
                 />
@@ -97,7 +101,12 @@ export default function File() {
                     Trouver ici la banque de fichiers utiles à votre formation. 
                     Libre à vous de faire une recherche spécifique.
                 </Text>
-            </View>
-        </TouchableWithoutFeedback>
+
+                <KeyboardAccessoryNavigation
+                    avoidKeyboard androidAdjustResize
+                />
+            </ScrollView>
+            
+        //</TouchableWithoutFeedback>
     );
 }

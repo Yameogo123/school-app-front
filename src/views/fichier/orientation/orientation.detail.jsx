@@ -5,7 +5,7 @@ import AnimatedLottieView from "lottie-react-native";
 import SimpleHeader from "../../../template/header/simpleHeader";
 import img from "../../../../assets/icon.png"
 import { useSelector } from "react-redux";
-import { API, API2 } from "../../../api/service";
+import { API } from "../../../api/service";
 import Video from 'react-native-video';
 
 
@@ -46,7 +46,7 @@ export default function OrientationDetail(){
     return (
         <View style={{flex:1}}>
             <View style={{alignItems:"center"}}>
-                {(orientation?.cover && !orientation?.video) && <Image source={{ uri: API2+"/document/show/"+orientation?.cover?.libelle}} style={style.img} />}
+                {(orientation?.cover && !orientation?.video) && <Image source={{ uri: API+"/document/show/"+orientation?.cover?.libelle}} style={style.img} />}
                 {orientation?.video && 
                     <Video source={{ uri: API+"/document/show/"+orientation?.video?.libelle}} 
                         paused={true} controls={true} style={style.img} />}

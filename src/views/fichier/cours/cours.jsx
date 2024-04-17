@@ -95,7 +95,7 @@ export default function Cours() {
         return (
             <View style={{width: "45%"}}>
                 <DropDownPicker 
-                    placeholder="trier par"
+                    placeholder="trier par" listMode="SCROLLVIEW"
                     open={open} value={value} items={items}
                     setOpen={setOpen} setValue={setValue} setItems={setItems}
                 />
@@ -107,7 +107,7 @@ export default function Cours() {
         return (<TouchableOpacity key={Math.floor(Math.random() * 100)} style={[style.card,{justifyContent: "space-between"}]} onPress={()=>nav.navigate("cours/liste", {cours: item?._id})}>
             <View style={[style.card, {borderWidth:0}]}>
                 <Ionicons name="folder" size={30} color={"skyblue"} />
-                <Text style={style.info}>{item.libelle}</Text>
+                <Text style={style.info}>{item.libelle?.slice(0, 20)+"..."}</Text>
             </View>
             <Ionicons name="md-arrow-forward" size={30} color={front} />
         </TouchableOpacity>);

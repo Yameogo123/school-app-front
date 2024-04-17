@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, Keyboard, FlatList, Linking, Platform } from "react-native";
+import { StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, Keyboard, FlatList, Linking, Platform, KeyboardAvoidingView } from "react-native";
 import { useSelector } from "react-redux";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "@react-native-material/core";
@@ -11,6 +11,7 @@ import { adaptSelect } from "../../../api/functions";
 import * as DocumentPicker from 'expo-document-picker';
 import Toast from "react-native-toast-message";
 import RNModal from "react-native-modal";
+
 
 export default function CoursListe() {
     
@@ -38,6 +39,8 @@ export default function CoursListe() {
     const [label, setLabel]= useState("");
     const [file, setFile]= useState(null);
     //const [item, setItem]= useState("");
+
+    const [isSending, setIsSending]= useState(false);
 
 
     useMemo(()=>{
@@ -71,55 +74,57 @@ export default function CoursListe() {
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 100, flex: 1}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
-                    <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                        <View >
-                            
-                            <View style={[style.block, {zIndex: 3}]}>
-                                <TextInput placeholder={"titre du document *"} inputStyle={{color:"black"}} onChangeText={setLabel}
-                                    {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
-                                    multiline
-                                />
-                            </View>
-
-                            <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3, alignItems: "center"}}>
-                               
-                                <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quelle classe </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setItem}
-                                        open={open2} value={classe} items={adaptSelect(classes)} searchable
-                                        setOpen={setOpen2} setValue={setClasse} maxHeight={250} setItems={setClasses} 
-                                        //theme="DARK"
-                                        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                    <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} style={{flex: 1}}>
+                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={300} >
+                            <View>
+                                
+                                <View style={[style.block, {zIndex: 3}]}>
+                                    <TextInput placeholder={"titre du document *"} inputStyle={{color:"black"}} onChangeText={setLabel}
+                                        {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
+                                        multiline
                                     />
                                 </View>
 
-                                <View style={[style.block, {zIndex: 2, width: "45%"}]}>
-                                    <Text style={style.text}>  </Text>
-                                    <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
-                                        <Text style={[style.text, {color: "black"}]}>{!file ? "choix du document" : "fichier choisi"}</Text>
-                                    </TouchableOpacity>
+                                <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3, alignItems: "center"}}>
+                                
+                                    <View style={[style.block, {zIndex: 4, width: "45%"}]}>
+                                        <Text style={style.text}>Quelle classe </Text>
+                                        <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setItem}
+                                            open={open2} value={classe} items={adaptSelect(classes)} searchable listMode="SCROLLVIEW"
+                                            setOpen={setOpen2} setValue={setClasse} maxHeight={250} setItems={setClasses} 
+                                            //theme="DARK"
+                                            badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                        />
+                                    </View>
+
+                                    <View style={[style.block, {zIndex: 2, width: "45%"}]}>
+                                        <Text style={style.text}>  </Text>
+                                        <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
+                                            <Text style={[style.text, {color: "black"}]}>{!file ? "choix du document" : "fichier choisi"}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
                                 </View>
 
-                            </View>
-
-                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
-                                <View >
-                                    <TouchableOpacity onPress={()=>{setShow(false); setLabel("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                        <Text style={style.text}>Annuler</Text>
-                                    </TouchableOpacity>
+                                <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+                                    <View >
+                                        <TouchableOpacity onPress={()=>{setShow(false); setLabel("")}} style={[style.btn2, {backgroundColor: "red"}]}>
+                                            <Text style={style.text}>Annuler</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View >
+                                        <TouchableOpacity disabled={isSending} onPress={handleAdd} style={[style.btn2, {backgroundColor: "green"}]}>
+                                            <Text style={style.text}>Ajouter</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View >
-                                    <TouchableOpacity onPress={handleAdd} style={[style.btn2, {backgroundColor: "green"}]}>
-                                        <Text style={style.text}>Ajouter</Text>
-                                    </TouchableOpacity>
-                                </View>
                             </View>
-                        </View>
+                        </KeyboardAvoidingView>
                     </TouchableWithoutFeedback>
-             </RNModal>
+            </RNModal>
         );
     }
 
@@ -132,6 +137,7 @@ export default function CoursListe() {
             })
         }else{
             if(label!=="" && file !==null && classe !==""){
+                setIsSending(true);
                 let f={
                     name: file?.name,
                     type: file?.mimeType,
@@ -165,10 +171,10 @@ export default function CoursListe() {
                         topOffset: 50, type:"error"
                     })
                 });
+                setIsSending(false);
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "veuillez saisir les champs",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "veuillez saisir les champs", topOffset: 50, type:"error"
                 })
             }
         }
@@ -245,7 +251,7 @@ export default function CoursListe() {
         return (<TouchableOpacity key={Math.floor(Math.random() * 100)} style={[style.card,{justifyContent: "space-between"}]} onPress={()=> handleClick(item)}>
             <View style={[style.card, {borderWidth:0}]} key={Math.floor(Math.random() * 100)}>
                 <Ionicons name="book" size={30} color={"skyblue"} />
-                <Text style={style.info}>{item?.label}</Text>
+                <Text style={style.info}>{item?.label?.slice(0, 20)+"..."}</Text>
             </View>
             <Ionicons name="md-arrow-forward" size={30} color={front} />
         </TouchableOpacity>);

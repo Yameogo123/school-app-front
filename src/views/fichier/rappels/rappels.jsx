@@ -126,9 +126,12 @@ export default function Rappels(){
 
     function Card({item}){
 
+        const replaceHTML = item?.libelle?.replace(/<(.|\n)*?>/g, " ").trim();
+        const replaceWhiteSpace = replaceHTML.replace(/&nbsp;/g, "").trim();
+
         return (
-            <TouchableOpacity key={item?.id} style={style.card} onPress={()=>nav.navigate("rappel/add", {doc:item})}>
-                <Text>{item?.libelle}</Text>
+            <TouchableOpacity key={Math.floor(Math.random() * 100)} style={style.card} onPress={()=>nav.navigate("rappel/add", {doc:item})}>
+                <Text>{replaceWhiteSpace?.slice(0, 100) + "..."}</Text>
                 <TouchableOpacity style={{position: "absolute", top: -5, right:-5, backgroundColor: "red", borderRadius: 15, padding: 5}} onPress={()=>handleSupp(item?._id)}>
                     <Ionicons name="trash-bin" color={back} size={30} />
                 </TouchableOpacity>
@@ -145,7 +148,7 @@ export default function Rappels(){
             <ScrollView>
                 {
                     elements?.map((el)=>{
-                        return <View key={el?._id}>
+                        return <View key={Math.floor(Math.random() * 100)}>
                             <Card item={el} />
                         </View>
                     })

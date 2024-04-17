@@ -22,9 +22,9 @@ export default function ForumContent({ heightOfMessageBox, messages }) {
     }, [])
  
     return (
-        <View style={{flex: 1, bottom: Math.max(keyBoardOffsetHeight, windowHeight * 0.02)+60}}>
+        <View style={{flex: 1, paddingBottom: Math.max(keyBoardOffsetHeight, windowHeight * 0.02)+60}}>
             <FlashList
-                inverted data={[...messages].reverse()}
+                inverted data={[...messages].reverse()} showsVerticalScrollIndicator={false}
                 renderItem={renderMessageBubble} estimatedItemSize={40}
             />
         </View>

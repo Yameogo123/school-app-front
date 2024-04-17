@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState, useMemo } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import AdminHeader from "../../../template/header/adminHeader";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -38,6 +38,8 @@ export default function Notifier(){
     const [open2, setOpen2]= useState(false);
     const [open3, setOpen3]= useState(false);
 
+    const [isSending, setIsSending]= useState(false);
+
     const nav=  useNavigation();
 
     useEffect(()=>{
@@ -62,6 +64,7 @@ export default function Notifier(){
     function handleValider(){
         if(object !==null && item !== null && libelle !== "" ){
             let i= 0
+            setIsSending(true);
             for(let x of item){
                 const opt={
                     "app_key":"647606299B1A3647606299B1A4",
@@ -87,6 +90,7 @@ export default function Notifier(){
             if(i!==0){
                 setObject(null); setItem(null); setLibelle("");
             }
+            setIsSending(false)
         }else{
             Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
         }
@@ -101,8 +105,8 @@ export default function Notifier(){
         },
         title:{fontWeight: "bold", fontSize: 25, padding: 5},
         text:{fontSize: 15, padding: 5, fontStyle: "italic", color: back},
-        part2:{borderTopRightRadius:50, backgroundColor: chart, flex:1},
-        block:{marginLeft: 20, padding: 5, marginRight: 20},
+        part2:{borderTopRightRadius:50, backgroundColor: chart, height: 600},
+        block:{marginLeft: 20, padding: 5, marginRight: 20, paddingTop: 20},
         input:{ borderRadius: 30},
         btn: {shadowColor: "black", shadowOffset: {width: 0.5, height: 1}, shadowOpacity: 0.4, shadowRadius: 20}
     });
@@ -112,10 +116,14 @@ export default function Notifier(){
         enablesReturnKeyAutomatically: true, variant:"outlined"
     }
 
+    let behave= Platform.OS==="ios" ? {
+        behavior:"height"
+    }: {}
+
     return (
-        <KeyboardAvoidingView style={style.container}>
-            <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                <View style={style.container}>
+        <KeyboardAvoidingView {...behave} style={{flex: 1}}>
+            {/* <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}> */}
+                <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                     <View style={style.head}>
                         <Text style={style.title}>Envoyer un sms</Text>
                         <Text style={[style.text, {color: front}]}>notifier urgement des utilisateurs</Text>
@@ -128,25 +136,26 @@ export default function Notifier(){
                                 open={open3} value={util} items={adaptSelect(users, 1)} searchable maxHeight={150}
                                 setOpen={setOpen3} setValue={setUtil} setItems={setUsers} multiple //theme="DARK"
                                 badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                listMode="SCROLLVIEW"
                             />
                         </View>
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
-                            <View style={[style.block, {zIndex: 4, width: "40%"}]}>
+                            <View style={[style.block, {zIndex: 4, width: "44%"}]}>
                                 <Text style={style.text}>A propos de </Text>
                                 <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> setAutre(item.libelle==="autre")}
                                     open={open2} value={object} items={adaptSelect(objects)}
                                     setOpen={setOpen2} setValue={setObject} searchable
-                                    setItems={setObjects} maxHeight={150}
+                                    setItems={setObjects} maxHeight={150} listMode="SCROLLVIEW"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                 />
                             </View>
 
-                            <View style={[style.block, {zIndex: 4, width: "40%"}]}>
+                            <View style={[style.block, {zIndex: 4, width: "44%"}]}>
                                 <Text style={style.text}></Text>
                                 {
                                     autre && <TextInput placeholder={"object du message"} inputStyle={{color:"black"}} onChangeText={setObject1}
-                                        {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} multiline
+                                        {...props} textContentType="name" multiline
                                     />
                                 }
                             </View>
@@ -161,15 +170,14 @@ export default function Notifier(){
                         </View>
 
                         <View style={[style.block, {zIndex: 1}]}>
-                            <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                            <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
                                 <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
                             </TouchableOpacity>
                         </View>
 
-                        
                     </View>
-                </View>
-            </TouchableWithoutFeedback>
+                </ScrollView>
+            {/* </TouchableWithoutFeedback> */}
         </KeyboardAvoidingView>
     )
 }

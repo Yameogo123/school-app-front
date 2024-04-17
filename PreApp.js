@@ -8,12 +8,17 @@ import Toast from 'react-native-toast-message';
 import { PreloadingStack } from "./src/navigation/stack";
 import Loading from "./src/template/component/loading";
 import moment from "moment";
+import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import french from "./src/translation/fr.json"
+import english from "./src/translation/en.json"
 
 export default function PreApp(){
 
     const dispatch= useDispatch();
     const log= useSelector((state)=>state.userReducer.log);
     const connexion= useSelector((state)=>state.userReducer.connected);
+    const langue= useSelector((state)=>state.paramReducer.langue)
 
     const [loading, setLoading]= useState(true);
     const appState = useRef(AppState.currentState);
@@ -49,6 +54,16 @@ export default function PreApp(){
     }, [])
 
     function loadData(){
+        getStringValue("langue").then(
+            (val)=>{
+              if(val){
+                const action2={
+                    type:"langue", value: val
+                }
+                dispatch(action2)
+              }
+            }
+        )
         getStringValue("log").then((res)=>{
             const action={type: "log", value: res}
             dispatch(action)
@@ -59,7 +74,7 @@ export default function PreApp(){
         }) 
         getStringValue("connected").then((res)=>{ 
             let val= "connected"
-            if(res===null){
+            if(res===null || res==="disconnected"){
                 val="disconnected"
             }
             const action={type: "connexion", value: val}
@@ -75,7 +90,12 @@ export default function PreApp(){
 
     useEffect(()=>{
         loadData();
-    },[])
+        i18next.use(initReactI18next).init({
+            compatibilityJSON: 'v3', lng: langue,
+            resources:{ en: english, fr: french },
+            react:{ useSuspense: false }
+        })
+    },[langue])
 
  
     return (

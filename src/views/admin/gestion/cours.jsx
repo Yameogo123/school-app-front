@@ -33,6 +33,8 @@ export default function Cours(){
 
     const [cour, setCour]= useState(null);
 
+    const [isSending, setIsSending]= useState(false);
+
     const nav=  useNavigation();
 
     useEffect(()=>{
@@ -80,7 +82,7 @@ export default function Cours(){
                                 <Text style={style.text}>Affecter un professeur ? </Text>
                                 <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                     open={open1} value={professeur} items={adaptSelect(professeurs, 1)} searchable
-                                    setOpen={setOpen1} setValue={setProfesseur} maxHeight={250}
+                                    setOpen={setOpen1} setValue={setProfesseur} maxHeight={250} listMode="SCROLLVIEW"
                                     setItems={setProfesseurs} //theme="DARK"
                                     //mode="BADGE"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -94,7 +96,7 @@ export default function Cours(){
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity onPress={()=>handleUpdate(out=false)} style={[style.btn2, {backgroundColor: "green"}]}>
+                                    <TouchableOpacity disabled={isSending} onPress={()=>handleUpdate(out=false)} style={[style.btn2, {backgroundColor: "green"}]}>
                                         <Text style={style.text}>Ajouter</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -110,7 +112,7 @@ export default function Cours(){
                                                     <Text style={[style.text, {color: back}]}>{prof?.nom +" "+prof?.prenom}</Text>
                                                 </View>
                                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                                    <TouchableOpacity onPress={()=>handleUpdate(out=true)} style={[style.btn2, {backgroundColor: "red"}]}>
+                                                    <TouchableOpacity onPress={()=>handleUpdate(out=true, prof?._id)} style={[style.btn2, {backgroundColor: "red"}]}>
                                                         <Text style={style.text}>retirer</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -125,10 +127,14 @@ export default function Cours(){
         );
     }
 
-    function handleUpdate(out){
-        if(professeur!==null && cour!=null){
-            let profs =cour?.professeurs?.filter((pr)=>pr?._id!==professeur);
-            const exist= cour?.professeurs?.find((pr)=>pr?._id===professeur)!==undefined && !out;
+    function handleUpdate(out,  prof_id=null){
+        let id = prof_id
+        if (prof_id==null) {
+            id= professeur
+        }
+        if(id!==null && cour!=null){
+            let profs =cour?.professeurs?.filter((pr)=>pr?._id!==id);
+            const exist= cour?.professeurs?.find((pr)=>pr?._id===id)!==undefined && !out;
             if(exist){
                 Toast.show({
                     text1: "erreur", text2: "Ce prof dispense déjà ce cours",
@@ -137,9 +143,10 @@ export default function Cours(){
                 return
             }
             if(!out){
-                profs =[...profs, professeur];
+                profs =[...profs, id];
             }
             const item= {...cour, professeurs: profs}
+            setIsSending(true);
             Update("/cours/update", {"cours": item}, true, token).then(
                 (rs)=>{
                     if(rs?.error){
@@ -154,17 +161,17 @@ export default function Cours(){
                         })
                         setProfesseur(null); setShow(false)
                     }
+                    setIsSending(false);
                 } 
             ).catch(()=>{
                 Toast.show({
-                    text1: "erreur", text2: "erreur de modification du cours",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "erreur de modification du cours", topOffset: 50, type:"error"
                 })
+                setIsSending(false);
             })
         }else{
             Toast.show({
-                text1: "erreur", text2: "veuillez choisir le professeur",
-                topOffset: 50, type:"error"
+                text1: "erreur", text2: "veuillez choisir le professeur", topOffset: 50, type:"error"
             })
         }
     }
@@ -179,15 +186,11 @@ export default function Cours(){
                     (rs)=>{
                         if(rs.error){
                             Toast.show({
-                                text1: "erreur", 
-                                text2: "la suppression a échoué",
-                                topOffset: 50, type:"error"
+                                text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message",
-                                text2: "cours bien supprimé",
-                                topOffset: 50
+                                text1: "message", text2: "cours bien supprimé", topOffset: 50
                             })
                             setLibelle("")
                         }

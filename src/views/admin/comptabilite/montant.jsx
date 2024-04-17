@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Dimensions, ScrollView, Platform, KeyboardAvoidingView } from "react-native";
 import { TextInput } from "@react-native-material/core";
 import { useSelector } from "react-redux";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -20,6 +20,7 @@ export default function Montant(){
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
 
+    const [isSending, setIsSending]= useState(false);
     const [montant, setMontant]= useState("");
 
     const [classes, setClasses]= useState([]);
@@ -34,7 +35,7 @@ export default function Montant(){
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <SimpleHeader />
+                return <SimpleHeader lk="admin/rapport" />
             }, 
             headerShown: true
         });
@@ -56,6 +57,7 @@ export default function Montant(){
             Toast.show({text1: "Erreur", text2: "Veuillez saisir un montant valide", type: "error", topOffset: 60})
         }else{
             if(item?.length > 0){
+                setIsSending(true)
                 item?.map((cl)=>{
                     const cls= {...cl, scolarite: mt}
                     Update("/classe/update", {classe: cls}, true, token).then(
@@ -74,6 +76,7 @@ export default function Montant(){
                         }
                     ).catch(()=>{});
                 })
+                setIsSending(false)
             }else{
                 Toast.show({
                     text1: "erreur", text2: "Veuillez choisir au moins une classe",
@@ -101,7 +104,7 @@ export default function Montant(){
         input:{ marginTop: 20, borderRadius: 30},
         title:{fontWeight: "bold", fontSize: 25, padding: 5},
         text:{fontSize: 15, padding: 5, fontStyle: "italic", color: front},
-        part2:{borderTopLeftRadius: 50,},
+        part2:{borderTopLeftRadius: 50},
         block:{marginLeft: 20, padding: 10, marginRight: 20, marginTop: 10 },
         btn: {shadowColor: "black", shadowOffset: {width: 0.5, height: 1}, shadowOpacity: 0.4, shadowRadius: 20}
     });
@@ -111,8 +114,12 @@ export default function Montant(){
         enablesReturnKeyAutomatically: true, variant:"outlined"
     }
 
+    let behave= Platform.OS==="ios" ? {
+        behavior:"height"
+    }: {}
+
     return (
-        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
+        <KeyboardAvoidingView {...behave} style={{flex: 1}}>
             <View style={style.container}>
                 <View style={style.top}>
                     <View style={style.box}>
@@ -126,24 +133,24 @@ export default function Montant(){
                     </View>
                 </View>
 
-                <View style={style.part2}>
+                <ScrollView style={style.part2} showsVerticalScrollIndicator={false}>
 
                     <View style={[style.block, {zIndex: 4}]}>
                         <Text style={style.text}>Choisir la classe ? </Text>
-                        <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
-                            open={open1} value={classe} items={adaptSelect(classes)} searchable
-                            setOpen={setOpen1} setValue={setClasse} maxHeight={250} multiple 
+                        <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem} listMode="SCROLLVIEW"
+                            open={open1} value={classe} items={adaptSelect(classes)} searchable 
+                            setOpen={setOpen1} setValue={setClasse} maxHeight={250} multiple
                             setItems={setClasses} mode="BADGE" //theme="DARK" 
                             badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                         />
-                    </View>
+                    </View> 
 
                     <View style={[style.block, {zIndex: 3}]}>
                         <Text style={style.text}>Le montant de la scolarité</Text>
                         <TextInput {...props} value={montant} onChangeText={setMontant} onSubmitEditing={handleSend} />
                     </View>
 
-                    <ScrollView showsVerticalScrollIndicator={false} style={{margin: 5}}>
+                    <View showsVerticalScrollIndicator={false} style={{margin: 15}}>
                         {
                             item?.length !== 0 && item?.map(
                                 (c, k)=>{
@@ -156,16 +163,15 @@ export default function Montant(){
                             )
                         }
 
-                        <View style={[style.block, {zIndex: 1}]}>
-                            <TouchableOpacity onPress={handleSend} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
+                        
+                    </View>
+             
+                </ScrollView>
 
-                    
-
-                            
+                <View style={[style.block, {zIndex: 1}]}>
+                    <TouchableOpacity disabled={isSending} onPress={handleSend} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                        <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={style.bottom}>
@@ -180,7 +186,7 @@ export default function Montant(){
                     </View>
                 </View>
             </View>
-        </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 
 }

@@ -53,7 +53,6 @@ export default function Notes() {
     }, [loading]);
 
     useMemo(()=>{
-        //setMatieres([])
         let root="/note/all/eleve/"+user?._id+"/"+user?.ecole?.anneeScolaire;
         if(user?.type==="Eleve"){
             root="/note/all/eleve/"+user?._id+"/"+user?.ecole?.anneeScolaire;
@@ -99,12 +98,9 @@ export default function Notes() {
             <View style={{width: "45%"}} key={"mat"}>
                 <DropDownPicker searchable key={"ddm"}
                     placeholder="filtre par matière"
-                    open={isVisible}
-                    value={selectedMatiere}
-                    items={matieres}
-                    setOpen={setVisible}
-                    setValue={setSelectedMatiere}
-                    setItems={setMatieres}
+                    open={isVisible} value={selectedMatiere} listMode="SCROLLVIEW"
+                    items={matieres} setOpen={setVisible}
+                    setValue={setSelectedMatiere} setItems={setMatieres}
                 />
             </View>
         );
@@ -115,12 +111,9 @@ export default function Notes() {
             <View style={{width: "45%"}} key={"date"}>
                 <DropDownPicker dropDownContainerStyle={{elevation: 999}}
                     placeholder="filtre par date" key={"ddd"}
-                    open={open}
-                    value={value}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setItems}
+                    open={open} value={value} listMode="SCROLLVIEW"
+                    items={items} setOpen={setOpen}
+                    setValue={setValue} setItems={setItems}
                 />
             </View>
         )
@@ -141,7 +134,7 @@ export default function Notes() {
                     <DropDownDate />
                     <DropDownMat />
                 </View>
-                <View style={{ zIndex : -1, marginBottom: 50, alignItems: "center" }}>
+                <View style={{ zIndex : -1, marginBottom: 50, }}>
                     <FlatList key={"flat"} scrollEnabled={notes.length > 9} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}  
                         contentContainerStyle={style.flat} numColumns={3} data={notes?.sort((a, b)=>value==="descendant" ? moment(b?.date) - moment(a?.date)  : moment(a?.date) - moment(b?.date))?.filter((x)=> x?.cours?._id?.includes(selectedMatiere)) } 
                         keyExtractor={({index, _})=> index}

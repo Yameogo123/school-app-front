@@ -1,5 +1,6 @@
-export const API2= "https://school-xp37.onrender.com" //   "http://localhost:3000" //   
-export const API= "https://fragile-fish-crown.cyclic.app" //
+export const API= "http://localhost:3000" //   
+
+
 
 export async function Send(link, data, stringify=true, tok=""){
     let head={

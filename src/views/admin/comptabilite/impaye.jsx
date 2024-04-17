@@ -20,7 +20,12 @@ export default function Impaye(){
     const [filtre, setFiltre]= useState("");
 
     const [inscriptions, setInscriptions]= useState([]);
-    const [reglements, setReglements]= useState([{libelle: ''},{libelle: 'mensuel'},{libelle: 'trimestriel'},{libelle: 'semestriel'}]);
+    const [reglements, setReglements]= useState(
+        [
+            {libelle: ''},{libelle: 'mensuel'},
+            {libelle: 'trimestriel'},{libelle: 'semestriel'}
+        ]
+    );
 
     const nav=  useNavigation();
 
@@ -30,7 +35,7 @@ export default function Impaye(){
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <SimpleHeader />
+                return <SimpleHeader lk="admin/rapport" />
             }, 
             headerShown: true
         });
@@ -87,7 +92,7 @@ export default function Impaye(){
                     <Text style={style.text}>Quelle type de règlement ? </Text>
                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={filtre} items={adaptSelect(reglements)}
-                        setOpen={setOpen1} setValue={setFiltre} 
+                        setOpen={setOpen1} setValue={setFiltre} listMode="SCROLLVIEW" 
                         setItems={setReglements} //theme="DARK"
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
@@ -114,7 +119,7 @@ export default function Impaye(){
             <View style={style.bottom}>
                 <View style={style.box}>
                     <Svg
-                        height={250} width={Dimensions.get('screen').width}
+                        height={240} width={Dimensions.get('screen').width}
                         viewBox="0 0 1440 320" style={style.bottomWavy} >
                         <Path fill="#87CEEB"
                             d='M0,0L11.4,37.3C22.9,75,46,149,69,186.7C91.4,224,114,224,137,197.3C160,171,183,117,206,128C228.6,139,251,213,274,218.7C297.1,224,320,160,343,133.3C365.7,107,389,117,411,106.7C434.3,96,457,64,480,64C502.9,64,526,96,549,133.3C571.4,171,594,213,617,218.7C640,224,663,192,686,192C708.6,192,731,224,754,197.3C777.1,171,800,85,823,85.3C845.7,85,869,171,891,186.7C914.3,203,937,149,960,154.7C982.9,160,1006,224,1029,229.3C1051.4,235,1074,181,1097,144C1120,107,1143,85,1166,117.3C1188.6,149,1211,235,1234,261.3C1257.1,288,1280,256,1303,229.3C1325.7,203,1349,181,1371,181.3C1394.3,181,1417,203,1429,213.3L1440,224L1440,320L1428.6,320C1417.1,320,1394,320,1371,320C1348.6,320,1326,320,1303,320C1280,320,1257,320,1234,320C1211.4,320,1189,320,1166,320C1142.9,320,1120,320,1097,320C1074.3,320,1051,320,1029,320C1005.7,320,983,320,960,320C937.1,320,914,320,891,320C868.6,320,846,320,823,320C800,320,777,320,754,320C731.4,320,709,320,686,320C662.9,320,640,320,617,320C594.3,320,571,320,549,320C525.7,320,503,320,480,320C457.1,320,434,320,411,320C388.6,320,366,320,343,320C320,320,297,320,274,320C251.4,320,229,320,206,320C182.9,320,160,320,137,320C114.3,320,91,320,69,320C45.7,320,23,320,11,320L0,320Z'

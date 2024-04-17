@@ -36,6 +36,8 @@ export default function Bulletin(){
     const [open1, setOpen1]= useState(false);
     const [open2, setOpen2]= useState(false);
 
+    const [isSending, setIsSending]= useState(false);
+
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
@@ -96,6 +98,7 @@ export default function Bulletin(){
     });
 
     async function createPDF() {
+        setIsSending(true)
         let options = {
             html: '<h1>PDF TEST</h1>', 
             fileName: 'bulletin', directory: 'Documents',
@@ -104,9 +107,11 @@ export default function Bulletin(){
         RNHTMLtoPDF?.convert(options).then(
             (r)=>{
                 console.log(r);
+                setIsSending(false)
             }
         ).catch((err)=>{
             console.log(err);
+            setIsSending(false)
         })
     }
   
@@ -132,7 +137,7 @@ export default function Bulletin(){
                     <Text style={style.text}>Quel semestre ? </Text>
                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={periode} items={adaptSelect(periodes)}
-                        setOpen={setOpen1} setValue={setPeriode} maxHeight={150}
+                        setOpen={setOpen1} setValue={setPeriode} maxHeight={150} listMode="SCROLLVIEW"
                         setItems={setPeriodes} //theme="DARK"
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
@@ -144,7 +149,7 @@ export default function Bulletin(){
                         <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                             open={open} value={classe} items={adaptSelect(classes)}
                             setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
-                            setItems={setClasses} 
+                            setItems={setClasses} listMode="SCROLLVIEW" 
                             badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                         />
                     </View>
@@ -155,7 +160,7 @@ export default function Bulletin(){
                 </View>
 
                 <View style={[style.block, {zIndex: 1}]}>
-                    <TouchableOpacity onPress={createPDF} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                    <TouchableOpacity disabled={isSending} onPress={createPDF} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
                         <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
                     </TouchableOpacity>
                 </View>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Alert, SectionList, Keyboard, TouchableWithoutFeedback, Linking, Platform } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Alert, SectionList, Keyboard, TouchableWithoutFeedback, Linking, Platform, KeyboardAvoidingView } from "react-native";
 import { useSelector } from "react-redux";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleHeader from "../../template/header/simpleHeader";
@@ -32,6 +32,8 @@ export default function Document(){
     const [update, setUpdate]=useState(false);
 
     const [datas, setDatas]= useState([]);
+
+    const [isSending, setIsSending]= useState(false);
 
     function groupIt(array){
         let arr= groupBy(array, 'type')
@@ -96,6 +98,7 @@ export default function Document(){
 
     function handleSave(){
         if(type!=="" && libelle !=="" && fileResponse !==null){
+            setIsSending(true);
             let file={
                 name: fileResponse?.name,
                 type: fileResponse?.mimeType,
@@ -123,6 +126,7 @@ export default function Document(){
                     }
                 }
             ).catch(()=>{});
+            setIsSending(false)
         }else{
             Toast.show({
                 text1: "erreur", text2: "veuillez saisir les champs",
@@ -139,6 +143,7 @@ export default function Document(){
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}
             >
                 <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
                     <View style={{ justifyContent: 'center', backgroundColor: back, borderRadius: 20, padding: 20, height: 500}}>                        
                         <Text style={[style.text, {color: chart}]}>nouveau document</Text>
 
@@ -165,10 +170,11 @@ export default function Document(){
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity onPress={handleSave} style={{backgroundColor: "green", margin : 35, borderRadius: 20}}>
+                        <TouchableOpacity disabled={isSending} onPress={handleSave} style={{backgroundColor: "green", margin : 35, borderRadius: 20}}>
                             <Text style={[style.text, {color: "white"}]}>Enregistrer</Text>
                         </TouchableOpacity>
                     </View>
+                    </KeyboardAvoidingView>
                 </TouchableWithoutFeedback>
             </RNModal>
         )
@@ -203,13 +209,11 @@ export default function Document(){
             (rp)=>{
                 if(rp?.error){
                     Toast.show({
-                        text1: "erreur", text2: "la mise à jour de l'utilisateur a échoué",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "la mise à jour de l'utilisateur a échoué", topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message", text2: "document joint avec succès",
-                        topOffset: 50
+                        text1: "message", text2: "document joint avec succès", topOffset: 50
                     })
 
                 }
@@ -239,16 +243,14 @@ export default function Document(){
                                 setUpdate(!update)
                             }else{
                                 Toast.show({
-                                    text1: "erreur", text2: "erreur de suppression",
-                                    topOffset: 50, type:"error"
+                                    text1: "erreur", text2: "erreur de suppression", topOffset: 50, type:"error"
                                 })
                             }
                         }
                     ).catch((err)=>{
                         console.log();
                         Toast.show({
-                            text1: "erreur", text2: "erreur de suppression du fichier",
-                            topOffset: 50, type:"error"
+                            text1: "erreur", text2: "erreur de suppression du fichier", topOffset: 50, type:"error"
                         })
                     })
                     
@@ -275,7 +277,7 @@ export default function Document(){
                             <TouchableOpacity style={{margin: 5}} onPress={()=>handleDetail(item)}>
                                 <Ionicons name="eye" color={"green"} size={30} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={{margin: 5}} onPress={()=>handleDelete(item)}>
+                            <TouchableOpacity disabled={isSending} style={{margin: 5}} onPress={()=>handleDelete(item)}>
                                 <Ionicons name="trash-bin" color={"tomato"} size={30} />
                             </TouchableOpacity>
                         </View>

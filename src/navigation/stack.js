@@ -188,7 +188,7 @@ export function PreloadingStack() {
             }}
         >
             <Stack.Screen name="page1" component={Page1} />
-            <Stack.Screen name="page2" component={Page2} />
+            <Stack.Screen name="page2" component={Page2} options={{ gestureEnabled: false }} />
             <Stack.Screen name="login" component={Login} />
         </Stack.Navigator>
     );

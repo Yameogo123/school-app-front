@@ -22,7 +22,7 @@ export default function AnnulerInscription(){
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
 
-    const [eleves, setEleves]= useState([{libelle: 'Sam'},{libelle: 'Max'},{libelle: 'Luc'}]);
+    const [eleves, setEleves]= useState([]);
     const [eleve, setEleve]= useState(null);
     const [inscriptions, setInscriptions]= useState([]);
     const [open, setOpen]= useState(false);
@@ -151,7 +151,7 @@ export default function AnnulerInscription(){
                     <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> getInsc(item?._id)}
                         open={open} value={eleve} items={adaptSelect(eleves, 1)}
                         setOpen={setOpen} setValue={setEleve} searchable maxHeight={250}
-                        setItems={setEleves} 
+                        setItems={setEleves} listMode="SCROLLVIEW" 
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
                 </View>
@@ -160,13 +160,13 @@ export default function AnnulerInscription(){
                     <Text style={style.text}>(glisser à droite pour annuler) </Text>
                     {
                         inscriptions.length!==0 && 
-                        inscriptions.map((ins, idx)=>{
+                        inscriptions.map((ins, _)=>{
                             return (
-                                <Swipeable key={idx} cancelsTouchesInView containerStyle={{marginLeft: -5, marginRight: -5}}
+                                <Swipeable key={Math.floor(Math.random() * 100)} cancelsTouchesInView containerStyle={{marginLeft: -5, marginRight: -5}}
                                     renderLeftActions={(progress, dragAnimatedValue)=>renderLeftActions(progress, dragAnimatedValue, ins?._id)}>
                                     <CardThree title={"année scolaire "+ins?.anneeScolaire} icon={"forward"} iconColor={"grey"}
                                         subTitle={"Classe de "+ins?.classe?.libelle} 
-                                        profile={require("../../../../assets/icon.png")} key={idx}/>
+                                        profile={require("../../../../assets/icon.png")} key={Math.floor(Math.random() * 100)}/>
                                 </Swipeable>
                             );
                         })

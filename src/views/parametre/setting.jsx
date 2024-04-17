@@ -1,34 +1,60 @@
 import { useNavigation } from "@react-navigation/native";
 import AnimatedLottieView from "lottie-react-native";
 import React, { useEffect } from "react";
-import { StyleSheet, View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleHeader from "../../template/header/simpleHeader";
-import { storeObject } from "../../redux/storage";
+import { storeObject, storeString } from "../../redux/storage";
+import { useTranslation } from "react-i18next";
 
 export default function Setting() {
 
     const nav=  useNavigation();
-    const front= useSelector((state)=>state.themeReducer.front);
     const back= useSelector((state)=>state.themeReducer.back);
     const chart= useSelector((state)=>state.themeReducer.chart);
+    const langue= useSelector((state)=>state.paramReducer.langue);
+    const {t, _}=useTranslation()
 
     const dispatch = useDispatch()
 
     function handleLogout(){
-        const login={user: "", token: ""}
+        const login={user: "", token: "", connected: "disconnected"}
         storeObject("login", login).then(
             ()=>{
-                const action={type: "login", value: login}
-                dispatch(action)
+                storeString("connected", "disconnected").then(
+                    ()=>{
+                        const action={type: "logout"}
+                        dispatch(action)
+                    }
+                )
             }
         )
     }
 
     function handleLink(link){
         if(link==="langue"){
-
+            Alert.alert("Attention", t("param4"), [
+                {
+                    text: t('continue'),
+                    onPress: () => {
+                        let val= langue === "fr" ? "en" : "fr"
+                        const action={
+                            type: "langue",
+                            value: val
+                        }
+                        storeString("langue", val).then(
+                            ()=>{
+                                dispatch(action)
+                            }
+                        )
+                    }
+                },
+                {
+                    text: t('cancel'),
+                    style: 'cancel',
+                }
+            ])
         }else{
             nav.navigate(link);
         }
@@ -45,12 +71,12 @@ export default function Setting() {
     }, []);
 
     const elements=[
-        {id: 1, libelle: "mes documents", action: ()=>handleLink("documents"), icon: "attach"},
+        {id: 1, libelle: "Documents", action: ()=>handleLink("documents"), icon: "attach"},
         // {id: 2, libelle: "liste des archives", action: ()=>handleLink("archives"), icon: "archive-outline"},
         {id: 3, libelle: "Informations", action: ()=>handleLink("informations"), icon: "information-circle-outline"},
-        {id: 4, libelle: "la scolarité", action: ()=>handleLink("scolarite"), icon: "school-outline"},
-        {id: 5, libelle: "les liens utiles", action: ()=>handleLink("liens"), icon: "ios-globe-outline"},
-        //{id: 6, libelle: "langue", action: ()=>handleLink("langue"), icon: "ios-language"}
+        {id: 4, libelle: t("param1"), action: ()=>handleLink("scolarite"), icon: "school-outline"},
+        {id: 5, libelle: t("param2"), action: ()=>handleLink("liens"), icon: "globe-outline"},
+        {id: 6, libelle:t("param3"), action: ()=>handleLink("langue"), icon: "language"}
     ];
 
     function displayBlock(item, key){
@@ -69,7 +95,7 @@ export default function Setting() {
         lottie:{width: 200, height: 200 },
         display: {
             flexDirection: "row", alignItems: "center", borderRadius: 30, borderColor: chart,
-            margin: 15,  borderWidth: 0.7, padding: 20, backgroundColor: "skyblue"
+            margin: 15,  borderWidth: 0.7, padding: 15, backgroundColor: "skyblue"
         },
         text: {fontSize: 20, marginLeft: 40, color: back, fontWeight: "bold"},
         bottom: {justifyContent: "center"}

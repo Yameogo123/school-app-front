@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Header from "../../template/header/header";
-import {ExpandableCalendar, CalendarProvider, CalendarUtils, TimelineList} from 'react-native-calendars';
+import {ExpandableCalendar, CalendarProvider, CalendarUtils, TimelineList, LocaleConfig} from 'react-native-calendars';
 import { groupBy } from "lodash";
 import { useSelector } from "react-redux";
 import { Get } from "../../api/service";
@@ -17,6 +17,7 @@ export default function Home() {
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
     const loading= useSelector((state)=>state.userReducer.loading);
+    const langue= useSelector((state)=>state.paramReducer.langue)
 
     const [currentDate, setCurrentDate] = useState(getDate());
     const onDateChange= (date)=>{
@@ -38,6 +39,12 @@ export default function Home() {
             headerShown: true
         })
     }, []);
+
+    useMemo(() => {
+        if (langue=='fr') {
+            LocaleConfig.defaultLocale = 'fr';
+        }
+    }, [langue])
 
     useMemo(()=>{
         let root1 = "/planCours/all/"+user?.ecole?._id+'/'+user?.ecole?.anneeScolaire

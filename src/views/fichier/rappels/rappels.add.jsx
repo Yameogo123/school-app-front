@@ -24,11 +24,15 @@ const RappelAdd = () => {
     const user= useSelector((state)=> state.userReducer.user);
     const loading= useSelector((state)=>state.userReducer.loading);
 
+    const [isSending, setIsSending]= useState(false);
+
     const [updated, setUpdated]= useState(route?.params?.doc ? route?.params?.doc :null)
 
     const submitContentHandle = () => {
-        const replaceHTML = descHTML.replace(/<(.|\n)*?>/g, "").trim();
-        const replaceWhiteSpace = replaceHTML.replace(/&nbsp;/g, "").trim();
+        // const replaceHTML = descHTML.replace(/<(.|\n)*?>/g, " ").trim();
+        // const replaceWhiteSpace = replaceHTML.replace(/&nbsp;/g, " ").trim();
+        let replaceWhiteSpace= descHTML
+        setIsSending(true);
         if(route?.params?.doc || updated!==null){
             //update
             const doc= {...updated, libelle: replaceWhiteSpace}
@@ -89,12 +93,13 @@ const RappelAdd = () => {
                 })
             }
         }
+        setIsSending(false);
     };
 
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
-                return <SimpleHeader  />
+                return <SimpleHeader />
             }, 
             headerShown: true
         })
@@ -102,14 +107,14 @@ const RappelAdd = () => {
 
 	return (
         <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} >
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ }}>
-
-                <View style={{margin: 10}}>
+            {/* <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex:1}} > */}
+            
+                <View style={{margin: 10, flex:1}}>
                     <RichToolbar 
-                        editor={richText}
+                        editor={richText} pasteAsPlainText
                         selectedIconTint="#873c1e" iconTint="#312921"
                         actions={[ actions.setBold, actions.setItalic, actions.setUnderline, actions.heading1, 
-                            actions.insertImage,actions.insertBulletsList, actions.insertOrderedList,
+                            actions.undo, actions.insertBulletsList, actions.insertOrderedList,
                             actions.insertLink 
                         ]}
                         iconMap={{ [actions.heading1]: handleHead }}
@@ -118,22 +123,31 @@ const RappelAdd = () => {
                         
                         <View style={{display:"flex", flexDirection: "row", justifyContent: "space-between", margin: 5, alignItems: "center"}}>
                             <Text style={{fontSize: 15}}>Description:</Text>
-                            <TouchableOpacity style={{ backgroundColor: route?.params?.doc?.content? "tomato": "blue", borderRadius: 15, padding: 5}} onPress={()=>submitContentHandle()}>
+                            <TouchableOpacity disabled={isSending} style={{ backgroundColor: route?.params?.doc?.content? "tomato": "blue", borderRadius: 15, padding: 5}} onPress={()=>submitContentHandle()}>
                                 <Ionicons name="save" color={back} size={25} />
                             </TouchableOpacity>
                         </View>
-                        <RichEditor style={{ flex: 1, height: "90%" }}
+                        <RichEditor androidLayerType="software" 
+                            androidHardwareAccelerationDisabled={true} style={{ flex: 1, height: "50%" }}
                             ref={richText} pasteAsPlainText 
+                            useContainer={false}
+                            containerStyle={{ minHeight: "46%" }}
                             onChange={ descriptionText => {
                                 setDescHTML(descriptionText);
                             }} placeholder="Ecrire ici.."
                             initialContentHTML={descHTML}
                         />
+
+                        {/* <KeyboardAccessoryNavigation
+                            animateOn="all" 
+                            avoidKeyboard androidAdjustResize
+                        /> */}
+
                         
                     </ScrollView>
                     
                 </View>
-            </KeyboardAvoidingView>
+            {/* </KeyboardAvoidingView> */}
         </TouchableWithoutFeedback>
     );
 };

@@ -13,13 +13,18 @@ export default function Page1(){
         setTimeout(()=>nav.navigate("page2"), 5000);
     }, []);
 
+    useEffect(() => {
+        const unsubscribe = nav.addListener('focus', () => {
+            setTimeout(()=>nav.navigate("page2"), 5000);
+        });
+        return unsubscribe;
+    }, [nav]);
+
 
     const style = StyleSheet.create({
         container:{
-            flex:1,
-            backgroundColor: "white",
-            alignItems: "center",
-            justifyContent: "center"
+            flex:1, backgroundColor: "white",
+            alignItems: "center", justifyContent: "center"
         },
         lottie:{width: "100%", height: 300 },
     })

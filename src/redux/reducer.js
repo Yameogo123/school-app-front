@@ -64,3 +64,16 @@ export function ThemeReducer(state= themeState, action){
             return state
     }
 }
+
+
+export function ParamReducer(state= paramState, action){
+    let newState;
+
+    switch (action.type) {
+        case "langue":
+            newState= {...state, langue: action.value}
+            return newState || state
+        default:
+            return state
+    }
+}

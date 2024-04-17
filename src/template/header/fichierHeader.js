@@ -19,7 +19,7 @@ export default function FichierHeader({sel= ""}){
 
     useMemo(()=>{
         if(selected!==""){
-            setFiles([sel, ...files.filter((x)=> x!==selected)])
+            setFiles([sel, ...files.reverse().filter((x)=> x!==selected)])
         }
     }, [sel])
 

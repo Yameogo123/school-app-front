@@ -20,12 +20,14 @@ export default function Reglement() {
     const [raison, setRaison]= useState("");
     const [montant, setMontant]= useState("");
 
+    const [isSending, setIsSending]= useState(false);
+
     const nav=  useNavigation();
 
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <AdminHeader />
+                return <AdminHeader lk="admin/rapport" />
             }, 
             headerShown: true
         })
@@ -37,8 +39,10 @@ export default function Reglement() {
             const rs= ["scolarité", "don", "sortie scolaire"]
             if(!isNaN(mt)){
                 if(rs?.includes(raison.toLocaleLowerCase())){
+                    setIsSending(true);
                     //redirect to payment page
                     
+                    setIsSending(false);
                 }else{
                     Toast.show({text1: "Erreur", text2: "veuillez saisir une raison valide", topOffset: 60, type: "error"});
                 }
@@ -109,7 +113,7 @@ export default function Reglement() {
                     </View>
 
                     <View style={[style.block, {zIndex: 1}]}>
-                        <TouchableOpacity onPress={handleSend} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40, padding: 20}]}>
+                        <TouchableOpacity disabled={isSending} onPress={handleSend} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40, padding: 20}]}>
                             <Text style={[style.title, {color: back, textAlign: "center"}]}>envoyer</Text>
                         </TouchableOpacity>
                     </View>

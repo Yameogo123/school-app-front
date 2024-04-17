@@ -96,7 +96,7 @@ export default function ForumBottom({ setIsTyping, isTyping, setHeightOfMessageB
                     style={{...styles.voiceButtonContainer, position: "absolute", right: 0, bottom: 6}}
                 >
                     <Pressable style={styles.voiceButton}
-                        onPress={sendMessage}
+                        onPress={sendMessage} disabled={isSending}
                     >
                        <Ionicons name="send" size={16} color={"white"} />
                     </Pressable>

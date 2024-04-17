@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableHighlight, View, Dimensions, TouchableOpacity, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import { API, API2, Get } from "../../../api/service";
+import { API, Get } from "../../../api/service";
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../../api/functions";
 import Svg, { Path } from 'react-native-svg';
@@ -36,7 +36,7 @@ export default function Orientation(){
             }, 
             headerShown: true
         }) 
-        console.log(classe);
+        //console.log(classe);
     }, [classe]); 
 
     useMemo(()=>{
@@ -96,20 +96,20 @@ export default function Orientation(){
                     <Text style={style.text}>Filtrer les orientations ? </Text>
                     <DropDownPicker placeholder="Veuillez choisir votre classe" //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={classe} items={adaptSelect([ {_id:"", libelle:""}, ...classes])}
-                        setOpen={setOpen1} setValue={setClasse} maxHeight={150} setItems={setClasses}
+                        setOpen={setOpen1} setValue={setClasse} maxHeight={150} setItems={setClasses} listMode="SCROLLVIEW"
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
                 </View>
 
                 <View style={{zIndex: 4, marginBottom: 100}}>
-                    <FlatList data={orientations.filter((o)=> o?.classe?._id?.includes(classe))} keyExtractor={({item})=> item?._id} 
+                    <FlatList data={orientations.filter((o)=> o?.classe?._id?.includes(classe))} keyExtractor={({_})=> Math.floor(Math.random() * 100)} 
                         showsVerticalScrollIndicator={false}
                         renderItem={({item, index})=>{
                             return (
-                                <TouchableOpacity key={item?._id} onPress={() => nav.navigate("orientation/detail", {orientation: item})}>
-                                    <CardEcomTwo
+                                <TouchableOpacity key={Math.floor(Math.random() * 100)} onPress={() => nav.navigate("orientation/detail", {orientation: item})}>
+                                    <CardEcomTwo 
                                         //onClicked={() => nav.navigate("orientation/detail", {orientation: item})}
-                                        image={{  uri: API2+"/document/show/"+item?.cover?.libelle }}
+                                        image={{  uri: API+"/document/show/"+item?.cover?.libelle }}
                                         price={moment(item?.date).format("YYYY-MM-DD")}
                                         subTitle={item?.classe?.libelle} title={item?.titre}
                                         //buttonText={"Consulter"}

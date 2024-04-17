@@ -71,7 +71,6 @@ export default function ForumDetail(){
 
 
     return (
-        <View style={{flex:1}}>
             <KeyboardAvoidingView style={{flex:1}}>
                 <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} >
                     <View style={{flex:1}}>
@@ -82,7 +81,7 @@ export default function ForumDetail(){
                     </View>
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
-        </View>
+
         
         
     )

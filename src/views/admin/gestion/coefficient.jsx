@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, ScrollView, Platform } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Keyboard, ScrollView, Platform } from 'react-native';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import AdminHeader from "../../../template/header/adminHeader";
 import { useSelector } from "react-redux";
@@ -39,6 +39,8 @@ export default function Coefficient(){
 
     const [open1, setOpen1]= useState(false);
     const [open2, setOpen2]= useState(false);
+
+    const [isSending, setIsSending]= useState(false);
 
     useEffect(()=>{
         nav.setOptions({
@@ -82,29 +84,34 @@ export default function Coefficient(){
     }, []); 
 
     const pop= ()=>{
+        let behave= Platform.OS==="ios" ? {
+            behavior:"height"
+        }: {}
+
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 105, marginBottom: 120}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200, paddingTop:  100}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
-                    <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                        <View>
-                            <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5, }}>
-                                <View style={[style.block, {zIndex: 4, width: "45%"}]}>
+                    <KeyboardAvoidingView {...behave} style={{flex: 1}}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5 }}>
+                                <View style={[style.block, {zIndex: 4, width: "47%"}]}>
                                     <Text style={style.text}>Quelle classe ? </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={classe} items={adaptSelect(classes)} searchable
-                                        setOpen={setOpen1} setValue={setClasse} maxHeight={150}
+                                        setOpen={setOpen1} setValue={setClasse} maxHeight={150} listMode="SCROLLVIEW"
                                         setItems={setClasses} //theme="DARK"
                                         //mode="BADGE"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
                                 </View>
-                                <View style={[style.block, {zIndex: 4, width: "45%"}]}>
+                                <View style={[style.block, {zIndex: 4, width: "47%"}]}>
                                     <Text style={style.text}>Quelle matière </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable setItems={setCours}
                                         setOpen={setOpen2} setValue={setCour} maxHeight={150} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                        listMode="SCROLLVIEW"
                                     />
                                 </View>
 
@@ -123,13 +130,13 @@ export default function Coefficient(){
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
+                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
                                         <Text style={style.text}>Ajouter</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
              </RNModal>
         );
     }
@@ -183,6 +190,7 @@ export default function Coefficient(){
                     const valeur={
                         ecole: user?.ecole?._id, valeur: coef, classe: classe, cours: cour
                     }
+                    setIsSending(true);
                     Send("/coefficient/new", {"coefficient": valeur}, true, token).then(
                         (rs)=>{
                             if(rs?.error){
@@ -198,18 +206,18 @@ export default function Coefficient(){
                                 })
                                 setShow(false); setClasse(""); setCour(""); setCoef("")
                             }
+                            setIsSending(false);
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur", text2: "erreur d'ajout de coefficient",
-                            topOffset: 50, type:"error"
+                            text1: "erreur", text2: "erreur d'ajout de coefficient", topOffset: 50, type:"error"
                         })
+                        setIsSending(false)
                     })
                 }
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "veuillez remplir les champs",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "veuillez remplir les champs", topOffset: 50, type:"error"
                 })
             }
         }
@@ -268,11 +276,11 @@ export default function Coefficient(){
         </View>
     );
 
-    const element1 = (id) => (
-        <TouchableOpacity onPress={() => handleEdit(id)} style={[style.btn, {backgroundColor: "blue"}]}>
-            <Ionicons name="pencil" size={25} color={chart} />
-        </TouchableOpacity>
-    );
+    // const element1 = (id) => (
+    //     <TouchableOpacity onPress={() => handleEdit(id)} style={[style.btn, {backgroundColor: "blue"}]}>
+    //         <Ionicons name="pencil" size={25} color={chart} />
+    //     </TouchableOpacity>
+    // );
 
     const style= StyleSheet.create({
         container:{

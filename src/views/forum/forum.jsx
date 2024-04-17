@@ -30,6 +30,8 @@ export default function Forum() {
     const [selected, setSelected]= useState(null);
     const [item, setItem]= useState(null);
 
+    const [isSending, setIsSending]= useState(false);
+
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
@@ -64,7 +66,7 @@ export default function Forum() {
 
     useMemo(()=>{     
         if(user?.type==="Directeur"){
-            Get("/user/all/ecole/"+user?.ecole?._id, token).then(
+            Get("/user/all/ecole/"+user?.ecole?._id, token).then( 
                 (rs)=>{
                     if(!rs?.error){
                         setUsers(rs?.users);
@@ -98,6 +100,7 @@ export default function Forum() {
                         topOffset: 50, type:"error"
                     });
                 }else{
+                    setIsSending(true)
                     Send("/conversation/new", {conversation: conversation}, true, token).then(
                         (rs)=>{
                             if(!rs?.error){
@@ -114,6 +117,7 @@ export default function Forum() {
                             }
                         }
                     ).catch(()=>{})
+                    setIsSending(false)
                 }
             }}
         ])
@@ -137,7 +141,7 @@ export default function Forum() {
                     <DropDownPicker placeholder="Veuillez choisir" onSelectItem={createConv}
                         open={open} value={selected} items={adaptSelect(users?.filter((u)=> u?._id!==user?._id), 1)}
                         setOpen={setOpen} setValue={setSelected} searchable maxHeight={250}
-                        setItems={setUsers} 
+                        setItems={setUsers} listMode="SCROLLVIEW" disabled={isSending}
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     /> 
                 </View>
@@ -162,7 +166,7 @@ export default function Forum() {
             alignItems: "center", zIndex: 9
         },
         txt:{
-            color: chart, fontSize: 15, fontWeight: "bold", textAlign: "center"
+            color: chart, fontSize: 12, fontWeight: "bold", textAlign: "center"
         },
         text:{fontSize: 15, padding: 5, fontStyle: "italic", color: front},
         bottom: {
@@ -178,13 +182,15 @@ export default function Forum() {
 
     function DisplayBulle({item, index}){
 
+        const utilisateur= item?.users?.find((us)=> us?._id!==user?._id)
+
         return (
             <TouchableOpacity style={[style.square, {}]} key={item?._id} onPress={()=>nav.navigate("forum/detail", {conversation: item})}>
                 <View style={{alignItems: "center", justifyContent: "center"}}>
                     <Image source={img} style={style.img} />
                 </View>
-                <View style={{ bottom: 15, backgroundColor: item?.read?.includes(user?._id) ? "white" : "tomato", left: 0, right: 0, borderRadius: 20}}>
-                    <Text style={style.txt}>{item?.title}</Text>
+                <View style={{ bottom: 15, backgroundColor: item?.read?.includes(user?._id) ? "white" : "tomato", left: 0, right: 0, borderRadius: 20, padding: 5}}>
+                    <Text style={[style.txt, {padding: 3}]}>{(utilisateur?.nom+" "+utilisateur?.prenom).substring(0, 14)+'..'}</Text>
                 </View>
             </TouchableOpacity>
         );

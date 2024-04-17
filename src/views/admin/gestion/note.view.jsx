@@ -50,6 +50,8 @@ export default function NoteView(){
     const [open2, setOpen2]= useState(false);
     const [open3, setOpen3]= useState(false);
 
+    const [isSending, setIsSending]= useState(false);
+
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
         setDate(currentDate);
@@ -139,17 +141,17 @@ export default function NoteView(){
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 15, marginBottom: 20}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 200, marginBottom: 200}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                     <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                        <View style={{alignItems: "center", justifyContent: "center"}}>
+                        <ScrollView contentContainerStyle={{alignItems: "center", justifyContent: "center"}}>
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5, }}>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
                                     <Text style={style.text}>Quelle élève ? </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
-                                        setOpen={setOpen1} setValue={setEleve} maxHeight={250}
+                                        setOpen={setOpen1} setValue={setEleve} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setEleves} //theme="DARK"
                                         //mode="BADGE"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -159,7 +161,7 @@ export default function NoteView(){
                                     <Text style={style.text}>Quelle cours </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable
-                                        setOpen={setOpen2} setValue={setCour} maxHeight={250}
+                                        setOpen={setOpen2} setValue={setCour} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setCours} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
@@ -200,7 +202,7 @@ export default function NoteView(){
                                     <Text style={style.text}>Choix de période </Text>
                                     <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
                                         open={open3} value={periode} items={adaptSelect(periodes)}
-                                        setOpen={setOpen3} setValue={setPeriode} maxHeight={100}
+                                        setOpen={setOpen3} setValue={setPeriode} maxHeight={100} listMode="SCROLLVIEW"
                                         setItems={setPeriodes} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
@@ -216,12 +218,12 @@ export default function NoteView(){
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
+                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
                                         <Text style={style.text}>Ajouter</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        </ScrollView>
                     </TouchableWithoutFeedback>
              </RNModal>
         );
@@ -266,6 +268,7 @@ export default function NoteView(){
             })
         }else{
             if(eleve!=="" && cour !=="" && note !=="" && periode!==""){
+                setIsSending(true)
                 const n= parseFloat(note)
                 if(isNaN(n)){
                     Toast.show({
@@ -326,11 +329,10 @@ export default function NoteView(){
                 }
             }else{
                 Toast.show({
-                    text1: "erreur",
-                    text2: "veuillez remplir les champs",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "veuillez remplir les champs", topOffset: 50, type:"error"
                 })
             }
+            setIsSending(false);
         }
     }
 
@@ -343,24 +345,20 @@ export default function NoteView(){
                 const nt= parseFloat(text);
                 if(isNaN(nt)){
                     Toast.show({
-                        text1: "erreur", text2: "erreur de mise à jour",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "erreur de mise à jour", topOffset: 50, type:"error"
                     })
                 }else{
                     Update("/note/update", {"note": {...note, note: nt, _id: id}}, true, token).then(
                         (rs)=>{
                             if(rs?.error){
                                 Toast.show({
-                                    text1: "erreur",
-                                    text2: "erreur de modification de la note",
-                                    topOffset: 50, type:"error"
+                                    text1: "erreur", text2: "erreur de modification de la note", topOffset: 50, type:"error"
                                 })
                             }else{
                                 Toast.show({
                                     text1: "message", text2: "note modifiée", topOffset: 50
                                 })
-                                setLibelle("")
-                                setShow(false)
+                                setLibelle(""); setShow(false)
                             }
                         }
                     ).catch(()=>{

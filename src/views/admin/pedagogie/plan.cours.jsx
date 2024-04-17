@@ -43,6 +43,8 @@ export default function PlanCours(){
     const [debut, setDebut] = useState(new Date());
     const [fin, setFin] = useState(moment().add(1, "hour").toDate());
 
+    const [isSending, setIsSending]= useState(false);
+
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
         setJour(currentDate);
@@ -119,6 +121,7 @@ export default function PlanCours(){
 
     function handleValider(){
         if(classe.length!==0 & salle !==null & cour!==null & professeur!==null){
+            setIsSending(true)
             const titre= "cours de "+ item?.libelle+" avec professeur "+item1?.nom +" "+item1?.prenom
             const summary= "salle "+item2?.libelle
             const start= moment(jour).format("YYYY-MM-DD")+" "+moment(debut).format("HH:mm:ss")
@@ -131,8 +134,7 @@ export default function PlanCours(){
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur",
-                            text2: "erreur de programmation de cours",
+                            text1: "erreur", text2: "erreur de programmation de cours",
                             topOffset: 50, type:"error"
                         })
                     }else{
@@ -141,12 +143,12 @@ export default function PlanCours(){
                         })
                         setProfesseur(null); setClasse([]); setCour(null); setSalle(null); 
                     }
+                    setIsSending(false)
                 }
             ).catch(()=>{
+                setIsSending(false);
                 Toast.show({
-                    text1: "erreur",
-                    text2: "erreur de programmation de cours",
-                    topOffset: 50, type:"error"
+                    text1: "erreur", text2: "erreur de programmation de cours", topOffset: 50, type:"error"
                 })
             })
         }else{
@@ -186,7 +188,7 @@ export default function PlanCours(){
                                 <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setClasse}
                                     open={open} value={classe} items={adaptSelect(classes)}
                                     setOpen={setOpen} searchable maxHeight={250} setValue={setClasse}
-                                    setItems={setClasses} multiple={true} mode="BADGE"
+                                    setItems={setClasses} multiple={true} mode="BADGE" listMode="SCROLLVIEW"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                 />
                             </View>
@@ -195,7 +197,7 @@ export default function PlanCours(){
                                 <Text style={style.text}>Quel cours ? </Text>
                                 <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
                                     open={open1} value={cour} items={adaptSelect(cours)} searchable
-                                    setOpen={setOpen1} setValue={setCour}
+                                    setOpen={setOpen1} setValue={setCour} listMode="SCROLLVIEW"
                                     setItems={setCours} maxHeight={150}
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                 />
@@ -209,6 +211,7 @@ export default function PlanCours(){
                                     open={open3} value={professeur} items={adaptSelect(professeurs, 1)} searchable maxHeight={150}
                                     setOpen={setOpen3} setItems={setProfesseurs} setValue={setProfesseur} //theme="DARK"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                    listMode="SCROLLVIEW"
                                 />
                             </View>
 
@@ -219,6 +222,7 @@ export default function PlanCours(){
                                     setOpen={setOpen2} searchable
                                     setItems={setSalles} maxHeight={150}
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                    listMode="SCROLLVIEW"
                                 />
                             </View>
                         </View>
@@ -262,7 +266,7 @@ export default function PlanCours(){
 
 
                         <View style={[style.block, {zIndex: 1}]}>
-                            <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                            <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
                                 <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
                             </TouchableOpacity>
                         </View>

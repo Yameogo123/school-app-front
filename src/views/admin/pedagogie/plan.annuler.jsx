@@ -23,6 +23,7 @@ export default function AnnulerPlan(){
     const [events, setEvents]= useState([]);
 
     const [jour, setJour] = useState(new Date());
+    const [isSending, setIsSending]= useState(false);
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date;
@@ -85,7 +86,7 @@ export default function AnnulerPlan(){
         return (
             <View style={style.swipedRow}>
                 <Animated.View style={[style.deleteButton, {opacity}]}>
-                    <TouchableOpacity onPress={()=>handleDelete(ev)}>
+                    <TouchableOpacity disabled={isSending} onPress={()=>handleDelete(ev)}>
                         <Ionicons name="trash" color={"red"} size={30} />
                     </TouchableOpacity>
                 </Animated.View>
@@ -94,6 +95,7 @@ export default function AnnulerPlan(){
     };
 
     function del(id, type="planEvent"){
+        setIsSending(true);
         Remove("/"+type+"/"+id, token).then(
             (rp)=>{
                 if(!rp?.error){
@@ -108,12 +110,14 @@ export default function AnnulerPlan(){
                         topOffset: 50, type:"error"
                     })
                 }
+                setIsSending(false);
             }
         ).catch(()=>{
             Toast.show({
                 text1: "erreur", text2: "erreur d'annulation de l'évènement",
                 topOffset: 50, type:"error"
             })
+            setIsSending(false)
         })
     }
 

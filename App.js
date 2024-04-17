@@ -17,7 +17,6 @@ LocaleConfig.locales['fr'] = {
   today: "Aujourd'hui"
 };
 
-LocaleConfig.defaultLocale = 'fr';
 
 export default function App() {
 
@@ -35,6 +34,7 @@ export default function App() {
       unsubscribe();
     };
   }, [])
+
 
   return (
     <Provide>

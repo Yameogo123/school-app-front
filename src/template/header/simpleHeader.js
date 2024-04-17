@@ -6,7 +6,7 @@ import {  useSelector } from "react-redux";
 import logo from "../../../assets/icon.png"
 
 
-export default function SimpleHeader({show=true}){
+export default function SimpleHeader({show=true, lk=""}){
 
     const chart= useSelector((state)=>state.themeReducer.chart)
     const nav=  useNavigation()
@@ -23,7 +23,7 @@ export default function SimpleHeader({show=true}){
 
     return (
         <SafeAreaView style={style.content}>
-            {show?<TouchableOpacity onPress={()=>nav.goBack()}>
+            {show?<TouchableOpacity onPress={()=> lk!="" ? nav.navigate(lk) :nav.goBack()}>
                 <Ionicons name="chevron-back-circle-outline" size={40} color={chart} />
             </TouchableOpacity>:<View></View>}
             <Image source={logo} style={style.img} />

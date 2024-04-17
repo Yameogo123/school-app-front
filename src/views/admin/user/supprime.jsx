@@ -25,6 +25,8 @@ export default function SupprimeUser(){
 
     const nav=  useNavigation();
 
+    const [isSending, setIsSending]= useState(false);
+
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
@@ -57,7 +59,7 @@ export default function SupprimeUser(){
         return (
             <View style={style.swipedRow}>
                 <Animated.View style={[style.deleteButton, {opacity}]}>
-                    <TouchableOpacity onPress={ () =>handleDelete(us)}>
+                    <TouchableOpacity disabled={isSending} onPress={ () =>handleDelete(us)}>
                         <Ionicons name="trash" color={"red"} size={30} />
                     </TouchableOpacity>
                 </Animated.View>
@@ -76,12 +78,12 @@ export default function SupprimeUser(){
                                 const util= {...us, archive: true}
                                 if(util?.type==="Directeur"){
                                     Toast.show({
-                                        text1: "erreur",
-                                        text2: "NON!! c'est le directeur! Au prochain essaie il sera notifié",
+                                        text1: "erreur", text2: "NON!! c'est un directeur! Au prochain essaie il sera notifié",
                                         topOffset: 50, type:"error"
                                     })
                                     setSearch(""); setUsers([]);
                                 }else{
+                                    setIsSending(true);
                                     Update("/user/update", util, true, token).then(
                                         (rp)=>{
                                             if(!rp?.error){
@@ -102,11 +104,11 @@ export default function SupprimeUser(){
                                             topOffset: 50, type:"error"
                                         })
                                     })
+                                    setIsSending(false);
                                 }
                             }else{
                                 Toast.show({
-                                    text1: "erreur", text2: "verifier votre mot de passe",
-                                    topOffset: 50, type:"error"
+                                    text1: "erreur", text2: "verifier votre mot de passe", topOffset: 50, type:"error"
                                 })
                             }
                         }
@@ -133,9 +135,7 @@ export default function SupprimeUser(){
             }
         ).catch(()=>{
             Toast.show({
-                text1: "erreur",
-                text2: "aucun utilisateur avec ce nom",
-                topOffset: 50, type:"error"
+                text1: "erreur", text2: "aucun utilisateur avec ce nom", topOffset: 50, type:"error"
             })
         }) 
     }

@@ -35,7 +35,10 @@ export default function FileResult() {
         },
         info:{color: front, fontSize: 20, opacity: 0.4, margin: 10},
         //scroll:{padding: 10},
-        line:{display: "flex", flexDirection: "row", alignItems: "center", margin: 10, marginLeft: 35},
+        line:{
+            display: "flex", flexDirection: "row", alignItems: "center", margin: 10, 
+            marginLeft: 35, borderBottomWidth: 1
+        }
     })
 
     function handleOpen(item){
@@ -65,12 +68,11 @@ export default function FileResult() {
                 {
                     files.map(
                         (item, id)=>{
-                            //console.log(item);
                             return (
                                 <TouchableOpacity style={style.line} key={id} onPress={()=>handleOpen(item)}>
                                     <Ionicons name="file-tray-full" size={35} color={front} />
                                     <Text style={style.info}>
-                                        {item?.label}
+                                        {item?.label?.slice(0, 200)}
                                     </Text>
                                 </TouchableOpacity> 
                             );

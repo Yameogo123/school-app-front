@@ -34,6 +34,7 @@ export default function Orientation(){
     const [classes, setClasses]= useState([]);
 
     const [open, setOpen]= useState(false);
+    const [isSending, setIsSending]= useState(false);
     
 
     useEffect(() => {
@@ -84,13 +85,11 @@ export default function Orientation(){
             (rp)=>{
                 if(rp?.error){
                     Toast.show({
-                        text1: "erreur", text2: "la mise à jour de l'orientation a échoué",
-                        topOffset: 50, type:"error"
+                        text1: "erreur", text2: "la mise à jour de l'orientation a échoué", topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message", text2: "document joint avec succès",
-                        topOffset: 50
+                        text1: "message", text2: "document joint avec succès", topOffset: 50
                     })
                 }
             }
@@ -104,6 +103,7 @@ export default function Orientation(){
             let orientation= {
                 titre: titre, contenu: contenu, classe: classe, ecole: user?.ecole?._id
             }
+            setIsSending(true);
 
             Send("/orientation/new", {"orientation": orientation}, true, token).then(
                 (rs)=>{
@@ -167,6 +167,7 @@ export default function Orientation(){
                         })
                         
                     }
+                    setIsSending(false);
                 }
             )
 
@@ -224,7 +225,7 @@ export default function Orientation(){
                                 <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                     open={open} value={classe} items={adaptSelect(classes)}
                                     setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
-                                    setItems={setClasses} 
+                                    setItems={setClasses} listMode="SCROLLVIEW" 
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                 />
                             </View>
@@ -271,7 +272,7 @@ export default function Orientation(){
                         </View>
 
                         <View style={[style.block, {zIndex: 1, marginTop: 30}]}>
-                            <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                            <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
                                 <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
                             </TouchableOpacity>
                         </View>

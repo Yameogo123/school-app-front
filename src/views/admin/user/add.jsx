@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import AdminHeader from "../../../template/header/adminHeader";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -48,6 +48,8 @@ export default function AddUser(){
     const [passport, setPassport] = useState("");
     const [photo, setPhoto] = useState("");
 
+    const [isSending, setIsSending]= useState(false);
+
     let swit= [
         {label:"identité", value:"identité"}, {label:"adresse", value:"adresse"}, 
         {label:"document", value:"document"}
@@ -89,15 +91,12 @@ export default function AddUser(){
             (rp)=>{
                 if(rp?.error){
                     Toast.show({
-                        text1: "erreur",
-                        text2: "la mise à jour de l'utilisateur a échoué",
+                        text1: "erreur", text2: "la mise à jour de l'utilisateur a échoué",
                         topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message",
-                        text2: "document joint avec succès",
-                        topOffset: 50
+                        text1: "message", text2: "document joint avec succès", topOffset: 50
                     })
                     setPassword(""); setNom(""); setPrenom(""); setNumb(""); setAdress("");
                     setPassport(""); setPhoto("");
@@ -115,9 +114,10 @@ export default function AddUser(){
                 web: web, linkedIn: linkedIn, localisation: adress, ecole: user?.ecole?._id,
                 password: password
             }
-
+            setIsSending(true)
             const fdata= new FormData();
-            fdata.append("user", JSON.stringify(use))
+            fdata.append("user", JSON.stringify(use));
+
             Send("/user/signin", fdata, false, token).then(
                 (rs)=>{
                     if(rs.error){
@@ -174,14 +174,14 @@ export default function AddUser(){
                         //envoie des identifiants par message 
 
                         Toast.show({
-                            text1: "message", text2: "utilisateur créé avec succès",
-                            topOffset: 50
+                            text1: "message", text2: "utilisateur créé avec succès", topOffset: 50
                         })
                         setPassword(""); setNom(""); setPrenom(""); setNumb(""); setAdress("");
                         setPassport(""); setPhoto(""); setSelected("identité");
                     }
                 }
             )
+            setIsSending(false);
 
         }else{
             Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
@@ -215,20 +215,21 @@ export default function AddUser(){
 
     const style= StyleSheet.create({
         container: {
-            flex: 1, backgroundColor: back
+            //flex: 1, 
+            backgroundColor: back
         },
         head:{
             margin: 15, padding: 10, paddingTop: 20, paddingBottom: 20
         },
         title:{fontWeight: "bold", fontSize: 25, padding: 5},
         text:{fontSize: 15, padding: 5, fontStyle: "italic", color: back},
-        part2:{borderTopRightRadius: 50, backgroundColor: chart, flex:1},
-        block:{marginLeft: 20, padding: 10, marginRight: 20, marginTop: 1},
+        part2:{borderTopRightRadius: 50, backgroundColor: chart, height: 600},
+        block:{marginLeft: 20, padding: 10, marginRight: 20, marginTop: 10},
         btn: {shadowColor: "black", shadowOffset: {width: 0.5, height: 1}, shadowOpacity: 0.4, shadowRadius: 20}
     });
 
     let behave= Platform.OS==="ios" ? {
-        behavior:"padding"
+        behavior:"height"
     }: {}
 
     const props={
@@ -237,13 +238,14 @@ export default function AddUser(){
     }
 
     return (
-        <KeyboardAvoidingView {...behave} style={{flex: 1}}>
-            <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-                <View style={{flex: 1}}>
+         //<TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
+            <KeyboardAvoidingView {...behave} style={{flex: 1}}>
+           
+                <View>
                     <View style={style.coord}>
                         <SwitchSelector hasPadding options={swit} onPress={(v)=>handlechoix(v)} buttonColor={chart} initial={0} />
                     </View>
-                    <View style={style.container}>
+                    <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                         <View style={style.head}>
                             <Text style={style.title}>Nouvel utilisateur</Text>
                             <Text style={[style.text, {color: front}]}>Veuillez remplir toutes les étapes</Text>
@@ -254,18 +256,18 @@ export default function AddUser(){
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5}}>
                                 <View style={[style.block, {zIndex: 4, width: "40%"}]}>
                                     <Text style={style.text}>Votre civilité* ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> console.log(item)}
+                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                         open={open} value={civilite} items={adaptSelect(civilites)}
                                         setOpen={setOpen} setValue={setCivilite} maxHeight={250}
-                                        setItems={setCivilites} 
+                                        setItems={setCivilites}  listMode="SCROLLVIEW"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
                                 </View>
                                 <View style={[style.block, {zIndex: 3, width: "45%"}]}>
                                     <Text style={style.text}>Type de profil* </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> console.log(item)}
+                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
                                         open={open2} value={type} items={adaptSelect(types)}
-                                        setOpen={setOpen2} setValue={setType}
+                                        setOpen={setOpen2} setValue={setType} listMode="SCROLLVIEW"
                                         setItems={setTypes} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
@@ -350,16 +352,17 @@ export default function AddUser(){
                                 </View>
 
                                 <View style={[style.block, {zIndex: 1, marginTop: 30}]}>
-                                    <TouchableOpacity onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
+                                    <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
                                         <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         }
 
-                    </View>
+                    </ScrollView>
                 </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+            
+            </KeyboardAvoidingView>
+        //</TouchableWithoutFeedback>
     )
 }
