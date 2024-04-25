@@ -10,6 +10,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../api/functions";
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from "react-i18next";
 
 
 export default function Forum() {
@@ -18,7 +19,7 @@ export default function Forum() {
     const [conv, setConv]= useState([]);
     const nav=  useNavigation();
     const front= useSelector((state)=>state.themeReducer.front);
-    const back= useSelector((state)=>state.themeReducer.back);
+    //const back= useSelector((state)=>state.themeReducer.back);
     const chart= useSelector((state)=>state.themeReducer.chart);
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
@@ -29,8 +30,9 @@ export default function Forum() {
     const [users, setUsers]= useState([]);
     const [selected, setSelected]= useState(null);
     const [item, setItem]= useState(null);
-
     const [isSending, setIsSending]= useState(false);
+
+    const {t, _}=useTranslation();
 
     useEffect(() => {
         nav.setOptions({
@@ -91,12 +93,12 @@ export default function Forum() {
         const title= us?.nom +" "+ us?.prenom
         const conversation={users:[id1, id2], title: title, messages:[], ecole: user?.ecole?._id, read: []}
         const exist= conv?.find((c)=> c?.users.includes(id1)) !==undefined
-        Alert.alert("confirmation", "voulez-vous envoyer un message à cet utilisateur ("+title+")", [
-            {text: "non", style: "cancel"},
-            {text: "oui", onPress: ()=>{
+        Alert.alert("confirmation", t('forum1')+ " ("+title+")", [
+            {text: t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: ()=>{
                 if(exist){
                     Toast.show({
-                        text1: "erreur", text2: "cette conversation existe déjà",
+                        text1: t("file4"), text2: t("forum2"),
                         topOffset: 50, type:"error"
                     });
                 }else{
@@ -106,12 +108,12 @@ export default function Forum() {
                             if(!rs?.error){
                                 setItem(null);
                                 Toast.show({
-                                    text1: "message", text2: "conversation ajoutée à la liste",
+                                    text1: "message", text2: t("forum3"),
                                     topOffset: 50, type:"success"
                                 });
                             }else{
                                 Toast.show({
-                                    text1: "erreur", text2: "conversation non créée",
+                                    text1: t("file4"), text2: t("forum4"),
                                     topOffset: 50, type:"error"
                                 });
                             }
@@ -131,14 +133,14 @@ export default function Forum() {
         return (
             <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around", zIndex: 10}}>
                 <View style={{width: "40%", margin: 10, zIndex: 11}}>
-                    <Text style={style.text}>Filtrer ?</Text>
-                    <TextInput placeholder="par nom" {...props} onChangeText={setFilter} inputStyle={{color: front}}  
-                        returnKeyLabel="filtrer" onSubmitEditing={()=>Keyboard.dismiss()}
+                    <Text style={style.text}>{t('forum5')} ?</Text>
+                    <TextInput placeholder={t('cours3')} {...props} onChangeText={setFilter} inputStyle={{color: front}}  
+                        returnKeyLabel="filtre" onSubmitEditing={()=>Keyboard.dismiss()}
                     />
                 </View>
                 <View style={{width: "40%", margin: 10, zIndex: 12}}>
-                    <Text style={style.text}>Ajouter utilisateur ?</Text>
-                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={createConv}
+                    <Text style={style.text}>{t('forum6')} ?</Text>
+                    <DropDownPicker placeholder={t('comptabilite2')} onSelectItem={createConv}
                         open={open} value={selected} items={adaptSelect(users?.filter((u)=> u?._id!==user?._id), 1)}
                         setOpen={setOpen} setValue={setSelected} searchable maxHeight={250}
                         setItems={setUsers} listMode="SCROLLVIEW" disabled={isSending}

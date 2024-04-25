@@ -6,16 +6,16 @@ import { API, Get } from "../../../api/service";
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../../api/functions";
 import Svg, { Path } from 'react-native-svg';
-import { CardFour, CardEcomTwo } from "react-native-card-ui";
+import { CardEcomTwo } from "react-native-card-ui";
 import moment from 'moment';
 import FichierHeader from '../../../template/header/fichierHeader';
+import { useTranslation } from "react-i18next";
 
 
 export default function Orientation(){
 
     const nav=  useNavigation();
     const front= useSelector((state)=>state.themeReducer.front);
-    const back= useSelector((state)=>state.themeReducer.back);
     const chart= useSelector((state)=>state.themeReducer.chart);
 
     const user = useSelector((state)=>state.userReducer.user);
@@ -24,10 +24,9 @@ export default function Orientation(){
 
     const [classe, setClasse]= useState("");
     const [classes, setClasses]= useState([]);
-
     const [orientations, setOrientations]= useState([]);
-
     const [open1, setOpen1]= useState(false);
+    const {t, _}=useTranslation();
 
     useEffect(() => {
         nav.setOptions({
@@ -93,8 +92,8 @@ export default function Orientation(){
             <View style={style.part2}>
 
                 <View style={[style.block, {zIndex: 5}]}>
-                    <Text style={style.text}>Filtrer les orientations ? </Text>
-                    <DropDownPicker placeholder="Veuillez choisir votre classe" //onSelectItem={(item)=> console.log(item)}
+                    <Text style={style.text}>{t('orientation1')}</Text>
+                    <DropDownPicker placeholder={t('orientation2')} //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={classe} items={adaptSelect([ {_id:"", libelle:""}, ...classes])}
                         setOpen={setOpen1} setValue={setClasse} maxHeight={150} setItems={setClasses} listMode="SCROLLVIEW"
                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -109,7 +108,7 @@ export default function Orientation(){
                                 <TouchableOpacity key={Math.floor(Math.random() * 100)} onPress={() => nav.navigate("orientation/detail", {orientation: item})}>
                                     <CardEcomTwo 
                                         //onClicked={() => nav.navigate("orientation/detail", {orientation: item})}
-                                        image={{  uri: API+"/document/show/"+item?.cover?.libelle }}
+                                        image={{ uri: API+"/document/show/"+item?.cover?.libelle }}
                                         price={moment(item?.date).format("YYYY-MM-DD")}
                                         subTitle={item?.classe?.libelle} title={item?.titre}
                                         //buttonText={"Consulter"}

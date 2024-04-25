@@ -11,6 +11,7 @@ import { adaptSelect } from "../../../api/functions";
 import * as DocumentPicker from 'expo-document-picker';
 import Toast from "react-native-toast-message";
 import RNModal from "react-native-modal";
+import { useTranslation } from "react-i18next";
 
 
 export default function CoursListe() {
@@ -38,7 +39,7 @@ export default function CoursListe() {
 
     const [label, setLabel]= useState("");
     const [file, setFile]= useState(null);
-    //const [item, setItem]= useState("");
+    const {t, _}=useTranslation();
 
     const [isSending, setIsSending]= useState(false);
 
@@ -74,15 +75,15 @@ export default function CoursListe() {
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 100, flex: 1}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 250, flex: 1}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                     <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} style={{flex: 1}}>
-                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={300} >
+                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
                             <View>
                                 
                                 <View style={[style.block, {zIndex: 3}]}>
-                                    <TextInput placeholder={"titre du document *"} inputStyle={{color:"black"}} onChangeText={setLabel}
+                                    <TextInput placeholder={t("cours6")+" *"} inputStyle={{color:"black"}} onChangeText={setLabel}
                                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                                         multiline
                                     />
@@ -92,7 +93,7 @@ export default function CoursListe() {
                                 
                                     <View style={[style.block, {zIndex: 4, width: "45%"}]}>
                                         <Text style={style.text}>Quelle classe </Text>
-                                        <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setItem}
+                                        <DropDownPicker placeholder={t('comptabilite2')} //onSelectItem={setItem}
                                             open={open2} value={classe} items={adaptSelect(classes)} searchable listMode="SCROLLVIEW"
                                             setOpen={setOpen2} setValue={setClasse} maxHeight={250} setItems={setClasses} 
                                             //theme="DARK"
@@ -103,21 +104,21 @@ export default function CoursListe() {
                                     <View style={[style.block, {zIndex: 2, width: "45%"}]}>
                                         <Text style={style.text}>  </Text>
                                         <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
-                                            <Text style={[style.text, {color: "black"}]}>{!file ? "choix du document" : "fichier choisi"}</Text>
+                                            <Text style={[style.text, {color: "black"}]}>{!file ? t("cours7") : t("cours8")}</Text>
                                         </TouchableOpacity>
                                     </View>
 
                                 </View>
 
-                                <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+                                <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around", 'marginTop': 30}}>
                                     <View >
                                         <TouchableOpacity onPress={()=>{setShow(false); setLabel("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                            <Text style={style.text}>Annuler</Text>
+                                            <Text style={style.text}>{t('cancel')}</Text>
                                         </TouchableOpacity>
                                     </View>
                                     <View >
                                         <TouchableOpacity disabled={isSending} onPress={handleAdd} style={[style.btn2, {backgroundColor: "green"}]}>
-                                            <Text style={style.text}>Ajouter</Text>
+                                            <Text style={style.text}>{t('drawer1')}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -132,7 +133,7 @@ export default function CoursListe() {
         const exist= fichiers.find((val)=> val?.label=== label && val?.classe===classe)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur", text2: "ce document existe déjà",
+                text1: "erreur", text2: t("cours9"),
                 topOffset: 50, type:"error"
             })
         }else{
@@ -154,27 +155,27 @@ export default function CoursListe() {
                     (r)=>{
                         if(!r?.error){
                             Toast.show({
-                                text1: "message", text2: "document bien sauvegardé",
+                                text1: "message", text2: t('cours10'),
                                 topOffset: 50
                             })
                             setLabel(""); setFile(null); setClasse(""); setShow(false)
                         }else{
                             Toast.show({
-                                text1: "erreur", text2: "fichier non sauvegardé",
-                                topOffset: 50, type:"error"
+                                text1: "erreur", text2: t('cours11'),
+                                topOffset: 50, type: "error"
                             })
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "problème de sauvegarde",
+                        text1: "erreur", text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 });
                 setIsSending(false);
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "veuillez saisir les champs", topOffset: 50, type:"error"
+                    text1: "erreur", text2: t("missing1"), topOffset: 50, type:"error"
                 })
             }
         }
@@ -185,10 +186,7 @@ export default function CoursListe() {
         const isPdf= libelle?.includes(".pdf");
         if(!isPdf){
             Linking.openURL(API+"/document/show/"+item?.libelle).then(
-                (rs)=>{
-                    //console.log(rs);
-                }
-            ).catch(()=> {})
+                (rs)=>{ } ).catch(()=> {})
         }else{
             nav.navigate("pdf", {document: API+"/document/show/"+libelle})
         }
@@ -232,13 +230,13 @@ export default function CoursListe() {
         return (
             <View style={{zIndex: 5, display: "flex", flexDirection: "row", justifyContent: "space-around", alignItems: "center"}}>
                 <View style={{width: "45%"}}>
-                    <TextInput placeholder="filtrer par libellé" {...props} onChangeText={setFilter} inputStyle={{color: front}}  
-                        returnKeyLabel="filtrer" onSubmitEditing={()=>Keyboard.dismiss()}
+                    <TextInput placeholder={t('cours5')} {...props} onChangeText={setFilter} inputStyle={{color: front}}  
+                        returnKeyLabel="filtre" onSubmitEditing={()=>Keyboard.dismiss()}
                     />
                 </View>
                 <View style={{width: "45%"}}>
                     <DropDownPicker 
-                        placeholder="trier par classe"
+                        placeholder={t('cours4')+ ' '+ t('drawer6') }
                         open={open} value={classe} items={adaptSelect(classes)}
                         setOpen={setOpen} setValue={setClasse} setItems={setClasses}
                     />
@@ -253,7 +251,7 @@ export default function CoursListe() {
                 <Ionicons name="book" size={30} color={"skyblue"} />
                 <Text style={style.info}>{item?.label?.slice(0, 20)+"..."}</Text>
             </View>
-            <Ionicons name="md-arrow-forward" size={30} color={front} />
+            <Ionicons name="arrow-forward" size={30} color={front} />
         </TouchableOpacity>);
     }
 

@@ -26,6 +26,11 @@ export default function FichierHeader({sel= ""}){
     useEffect(()=>{
         if(user?.type==="Eleve"){
             setFiles([...files, "absences"]);
+        }else{
+            if(user?.type==="Directeur"){ 
+                const f= files.filter((val, idx)=> val!=="notes")
+                setFiles(f);
+            }
         }
     }, [])
 

@@ -1,22 +1,20 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList, Linking, Alert, Image } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { View, Text, ScrollView, StyleSheet, Linking, Image } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import AnimatedLottieView from "lottie-react-native";
 import SimpleHeader from "../../../template/header/simpleHeader";
-import img from "../../../../assets/icon.png"
 import { useSelector } from "react-redux";
 import { API } from "../../../api/service";
 import Video from 'react-native-video';
-
+import translate from 'translate-google-api';
 
 export default function OrientationDetail(){
 
     const nav=  useNavigation();
     const front= useSelector((state)=>state.themeReducer.front);
-    const back= useSelector((state)=>state.themeReducer.back);
-    const chart= useSelector((state)=>state.themeReducer.chart);
+    const langue= useSelector((state)=>state.paramReducer.langue);
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
+    const [body, setBody]= useState("")
 
     const route= useRoute();
     const orientation= route.params?.orientation
@@ -43,6 +41,16 @@ export default function OrientationDetail(){
         })
     }, []);
 
+    useMemo(async () => {
+        const result = await translate(orientation?.contenu, {
+            tld: "com",
+            to: langue,
+        }); 
+        if(result.length!==0){
+            setBody(result[0])
+        }
+    }, [])
+
     return (
         <View style={{flex:1}}>
             <View style={{alignItems:"center"}}>
@@ -53,8 +61,8 @@ export default function OrientationDetail(){
             </View>
             <View style={{margin: 5, marginTop: 20}}>
                 <ScrollView contentContainerStyle={{alignItems:"center", margin: 15}}>
-                    <Text style={style.title}>Détail</Text>
-                    <Text style={style.text}>{orientation?.contenu}</Text>
+                    <Text style={style.title}>Detail</Text>
+                    <Text style={style.text}>{body}</Text>
                 </ScrollView>
             </View>
             

@@ -67,14 +67,16 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.6.4",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.1"
+    "redux": "^4.2.1",
+    "translate-google-api": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
   "private": true,
   "expo-yarn-workspaces": {
-    "symlinks": ["expo-constants"]
+    "symlinks": [
+      "expo-constants"
+    ]
   }
-
 }

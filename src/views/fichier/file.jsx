@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, ScrollView } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import FichierHeader from "../../template/header/fichierHeader";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import AnimatedLottieView from "lottie-react-native";
@@ -8,13 +8,12 @@ import { TextInput } from "@react-native-material/core";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 import { Get } from "../../api/service";
-import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory';
-
+import { useTranslation } from "react-i18next";
 
 export default function File() {
     
     const nav=  useNavigation();
-    const ref= useRef();
+    //const ref= useRef();
     const [search, setSearch]=useState("");
     const front= useSelector((state)=>state.themeReducer.front);
     const back= useSelector((state)=>state.themeReducer.back);
@@ -22,6 +21,7 @@ export default function File() {
 
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
+    const {t, _}=useTranslation();
 
     const [isSending, setIsSending]= useState(false);
 
@@ -44,32 +44,28 @@ export default function File() {
                         nav.navigate("file/result", {files: rs?.documents})
                     }else{
                         Toast.show({
-                            text1: "remarques", text2: "aucun document trouvé. Veuillez spécifier votre recherche!", type:"info",
+                            text1: t("file2"), text2: t("file3"), type:"info",
                             topOffset: 60
                         })
                     }
                 }else{
                     Toast.show({
-                        text1: "erreur", text2: "erreur de recherche!", type:"error",
+                        text1: t("file4"), text2: t("file5"), type:"error",
                         topOffset: 60
                     })
                 }
             }
         ).catch(()=>{
             Toast.show({
-                text1: "erreur", text2: "problème de recherche!", type:"error", topOffset: 60
+                text1: t("file4"), text2: t("file5"), type:"error", topOffset: 60
             })
         });
         setIsSending(false);
     }
 
     const style = StyleSheet.create({
-        container:{
-            flex: 1
-        },
-        lottie:{
-            width: 250, height: 200
-        },
+        container:{ flex: 1 },
+        lottie:{ width: 250, height: 200 },
         input:{backgroundColor: chart, marginLeft: 30, marginRight: 30, marginTop: 20, borderRadius: 30},
         info:{color: front, margin: 30, fontSize: 20, textAlign: "justify", opacity: 0.4},
 
@@ -84,7 +80,7 @@ export default function File() {
         //<TouchableWithoutFeedback >
             <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                 <View style={{alignItems: "center"}}>
-                    <AnimatedLottieView speed={2} autoPlay autoSize loop source={{uri: "https://assets3.lottiefiles.com/private_files/lf30_gd2unfh8.json"}}
+                    <AnimatedLottieView speed={2} autoPlay autoSize loop source={{uri: "https://lottie.host/654cbbc7-6443-479c-a373-41eb18e11940/Wfh3fRxovo.json"}}
                         style={style.lottie}
                     />
                 </View>
@@ -93,18 +89,15 @@ export default function File() {
                     leading={<Ionicons name="search" size={20} color={back} />} inputStyle={{color:"white"}}
                     onChangeText={setSearch} {...props} returnKeyLabel="recherche"
                     trailing={<TouchableOpacity disabled={isSending} onPress={handleSearch}>
-                        <Ionicons name="md-enter" size={25} color={back} />
+                        <Ionicons name="enter" size={25} color={back} />
                     </TouchableOpacity>} onSubmitEditing={handleSearch}
                 />
 
                 <Text style={style.info}>
-                    Trouver ici la banque de fichiers utiles à votre formation. 
-                    Libre à vous de faire une recherche spécifique.
+                    {t('file1')}
                 </Text>
 
-                <KeyboardAccessoryNavigation
-                    avoidKeyboard androidAdjustResize
-                />
+                
             </ScrollView>
             
         //</TouchableWithoutFeedback>

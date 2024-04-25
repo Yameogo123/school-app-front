@@ -6,20 +6,21 @@ import FichierHeader from "../../../template/header/fichierHeader";
 import { useSelector } from "react-redux";
 import { Get, Remove, Update } from "../../../api/service";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function Rappels(){
 
     const nav= useNavigation();
     const [elements, setElements]=useState([]);
-    const front= useSelector((state)=>state.themeReducer.front);
     const back= useSelector((state)=>state.themeReducer.back);
-    const chart= useSelector((state)=>state.themeReducer.chart);
+    //const chart= useSelector((state)=>state.themeReducer.chart);
 
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
     const loading= useSelector((state)=>state.userReducer.loading);
 
     const [action, setAction]=useState(true);
+    const {t, _}=useTranslation();
 
     useEffect(() => {
         nav.setOptions({ 
@@ -66,19 +67,19 @@ export default function Rappels(){
     })
 
     function handleSupp(id){
-        Alert.alert("confirmation", "voulez vous confirmer la suppression?", [
-            {text:'annuler', style:"cancel"}, 
-            {text: "confirmer", onPress: ()=>{
+        Alert.alert("confirmation", t("rappel1"), [
+            {text:t("cancel"), style:"cancel"}, 
+            {text: t("continue"), onPress: ()=>{
                 Remove("/rappel/"+id, token).then(
                     (rp)=>{
                         if(rp?.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué",
+                                text1: t("file4"), text2: t("rappel2"),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "rappel mémoire supprimé",
+                                text1: "message", text2: t("rappel3"),
                                 topOffset: 50
                             })
                             setAction(!action);
@@ -86,7 +87,7 @@ export default function Rappels(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "problème de suppression",
+                        text1: t("file4"), text2: t("file4"),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -95,20 +96,20 @@ export default function Rappels(){
     }
 
     function handleArchive(el){
-        Alert.alert("confirmation", "voulez vous archiver ce élément?", [
-            {text:'annuler', style:"cancel"}, 
-            {text: "confirmer", onPress: ()=>{
+        Alert.alert("confirmation", t("rappel4"), [
+            {text:t("cancel"), style:"cancel"}, 
+            {text: t("continue"), onPress: ()=>{
                 const element= {...el, archive: true}
                 Update("/rappel/update",{rappel: element}, true, token).then(
                     (rp)=>{
                         if(rp?.error){
                             Toast.show({
-                                text1: "erreur", text2: "l'archivage a échoué",
+                                text1: t("file4"), text2: t("rappel5"),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "rappel archivé",
+                                text1: "message", text2: t("rappel6"),
                                 topOffset: 50
                             })
                             setAction(!action);
@@ -116,7 +117,7 @@ export default function Rappels(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "problème d'archivage",
+                        text1: t("file4"), text2: t("file4"),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -144,7 +145,7 @@ export default function Rappels(){
 
     return (
         <View style={style.container}>
-            <Text style={style.title}>Votre liste de rappel mémoire</Text>
+            <Text style={style.title}>{t('rappel7')}</Text>
             <ScrollView>
                 {
                     elements?.map((el)=>{

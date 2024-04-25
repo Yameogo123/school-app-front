@@ -2,8 +2,8 @@ import { View, Dimensions } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import useKeyboardOffsetHeight from "../../template/component/useKeyboardOffsetHeight";
 import MessageBubble from "./message.bubble";
-import getMessageHeightOffset from "../../template/component/getMessageHeightOffset";
-import react, { useEffect, useState } from "react";
+// import getMessageHeightOffset from "../../template/component/getMessageHeightOffset";
+import react, { useEffect } from "react";
 
 const windowHeight = Dimensions.get("window").height;
 

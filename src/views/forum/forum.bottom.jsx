@@ -1,7 +1,7 @@
 import { View, TextInput, Pressable, ImageBackground, Dimensions} from "react-native";
 import React, { useState, useRef, useContext, useEffect } from "react";
-import { Transition, Transitioning, TransitioningView } from "react-native-reanimated";
-import { Entypo, FontAwesome5 } from "@expo/vector-icons";
+// import { Transition, Transitioning, TransitioningView } from "react-native-reanimated";
+// import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 import styles from "./detail.style";
@@ -17,7 +17,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 export default function ForumBottom({ setIsTyping, isTyping, setHeightOfMessageBox, thisConversation, isSending, setIsSending }) {
 
     const [newMsg, setNewMsg] = useState("");
-    const ref = useRef(null);
+    //const ref = useRef(null);
     const keyBoardOffsetHeight = useKeyboardOffsetHeight();
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);

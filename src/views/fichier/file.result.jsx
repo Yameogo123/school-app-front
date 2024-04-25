@@ -31,7 +31,7 @@ export default function FileResult() {
             flex: 1, marginBottom: 50
         },
         lottie:{
-            width: 150, height: 150
+            width: 200, height: 200
         },
         info:{color: front, fontSize: 20, opacity: 0.4, margin: 10},
         //scroll:{padding: 10},
@@ -59,7 +59,7 @@ export default function FileResult() {
         <View style={style.container}>
             <View style={{alignItems: "center"}}>
                 <AnimatedLottieView speed={2} autoPlay autoSize loop 
-                    source={{uri: "https://assets3.lottiefiles.com/packages/lf20_sbjamtbf.json"}}
+                    source={{uri: "https://lottie.host/9234b0ab-cea4-46e3-833d-81062ea9c848/z67p60r5rJ.json"}}
                     style={style.lottie}
                 />
             </View>

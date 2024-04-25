@@ -8,11 +8,8 @@ export default StyleSheet.create({
     sendBtnContainer: {
         minHeight: windowHeight * 0.06,
         maxHeight: windowHeight * 0.4,
-        paddingHorizontal: "1%",
-        position: "absolute",
-        left: 0,
-        width: windowWidth,
-        alignContent: "center",
+        paddingHorizontal: "1%", position: "absolute",
+        left: 0, width: windowWidth, alignContent: "center",
     },
 
     textBoxContainer: {

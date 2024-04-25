@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "@react-native-material/core";
 import { Get } from "../../../api/service";
+import { useTranslation } from "react-i18next";
 
 export default function Cours() {
     
@@ -23,10 +24,13 @@ export default function Cours() {
     const [filtre, setFilter] = useState('');
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
+    const {t, _}=useTranslation();
+
     const [items, setItems] = useState([
-        {id: 1, label: 'ordre croissant', value: 'ascendant'},
-        {id: 2, label: 'ordre décroissant', value: 'descendant'},
+        {id: 1, label: t('cours1'), value: 'ascendant'},
+        {id: 2, label: t('cours2'), value: 'descendant'},
     ]);
+    
 
     useEffect(() => {
         nav.setOptions({
@@ -84,7 +88,7 @@ export default function Cours() {
         }
         return (
             <View style={{width: "45%"}}>
-                <TextInput placeholder="filtrer par nom" {...props} onChangeText={setFilter} inputStyle={{color: front}}  
+                <TextInput placeholder={t('cours3')} {...props} onChangeText={setFilter} inputStyle={{color: front}}  
                     returnKeyLabel="filtrer" onSubmitEditing={()=>Keyboard.dismiss()}
                 />
             </View>
@@ -95,7 +99,7 @@ export default function Cours() {
         return (
             <View style={{width: "45%"}}>
                 <DropDownPicker 
-                    placeholder="trier par" listMode="SCROLLVIEW"
+                    placeholder={t("cours4")} listMode="SCROLLVIEW"
                     open={open} value={value} items={items}
                     setOpen={setOpen} setValue={setValue} setItems={setItems}
                 />
@@ -109,7 +113,7 @@ export default function Cours() {
                 <Ionicons name="folder" size={30} color={"skyblue"} />
                 <Text style={style.info}>{item.libelle?.slice(0, 20)+"..."}</Text>
             </View>
-            <Ionicons name="md-arrow-forward" size={30} color={front} />
+            <Ionicons name="arrow-forward" size={30} color={front} />
         </TouchableOpacity>);
     }
 

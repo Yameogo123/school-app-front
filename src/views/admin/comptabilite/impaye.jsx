@@ -9,6 +9,7 @@ import SimpleHeader from "../../../template/header/simpleHeader";
 import { adaptSelect } from "../../../api/functions";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CardThree } from "react-native-card-ui";
+import { useTranslation } from "react-i18next";
 
 
 export default function Impaye(){
@@ -16,6 +17,7 @@ export default function Impaye(){
     const front= useSelector((state)=> state.themeReducer.front);
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
+    const {t, _}=useTranslation();
 
     const [filtre, setFiltre]= useState("");
 
@@ -89,8 +91,8 @@ export default function Impaye(){
             <View style={style.part2}>
             
                 <View style={[style.block, {zIndex: 5}]}>
-                    <Text style={style.text}>Quelle type de règlement ? </Text>
-                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                    <Text style={style.text}>{t('comptabilite1')}? </Text>
+                    <DropDownPicker placeholder={t('comptabilite2')} //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={filtre} items={adaptSelect(reglements)}
                         setOpen={setOpen1} setValue={setFiltre} listMode="SCROLLVIEW" 
                         setItems={setReglements} //theme="DARK"

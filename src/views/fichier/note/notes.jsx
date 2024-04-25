@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import { StyleSheet, View, Text, Button, TouchableWithoutFeedback, Keyboard, FlatList, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Button, TouchableWithoutFeedback, Keyboard, FlatList, Dimensions } from "react-native";
 import FichierHeader from "../../../template/header/fichierHeader";
 import { useSelector } from "react-redux";
 import DropDownPicker from 'react-native-dropdown-picker';
 import moment from "moment";
 import { Get } from "../../../api/service";
 import { adaptSelect } from "../../../api/functions";
+import { useTranslation } from "react-i18next";
 
 export default function Notes() {
     
@@ -20,18 +21,9 @@ export default function Notes() {
     const [isVisible, setVisible] = useState(false);
     const nav=  useNavigation();
     const [matieres, setMatieres]= useState([]);
-    const [notes, setNotes]= useState([
-        {note: 4, id: 1, matiere: "mathématiques", date :"2023-06-01"},{note: 10, id: 2, matiere: "P-C", date :"2023-06-11"},
-        {note: 14, id: 3, matiere: "latin", date :"2023-07-01"},{note: 18, id: 4, matiere: "latin", date :"2023-06-21"},
-    ]);
+    const [notes, setNotes]= useState([]);
     const [selectedMatiere, setSelectedMatiere] = useState("");
-    const pickerRef = useRef();
-    /*function open() {
-        pickerRef.current.focus();
-    }
-    function close() {
-        pickerRef.current.blur();
-    }*/
+
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("descendant");
     const [items, setItems] = useState([
@@ -40,6 +32,7 @@ export default function Notes() {
     ]);
 
     const width= Math.floor(Dimensions.get("screen").width /3 - 13);
+    const {t, _}=useTranslation();
 
     useMemo(()=>{
         setMatieres([])
@@ -97,7 +90,7 @@ export default function Notes() {
         return (
             <View style={{width: "45%"}} key={"mat"}>
                 <DropDownPicker searchable key={"ddm"}
-                    placeholder="filtre par matière"
+                    placeholder={t("note1")}
                     open={isVisible} value={selectedMatiere} listMode="SCROLLVIEW"
                     items={matieres} setOpen={setVisible}
                     setValue={setSelectedMatiere} setItems={setMatieres}
@@ -110,7 +103,7 @@ export default function Notes() {
         return (
             <View style={{width: "45%"}} key={"date"}>
                 <DropDownPicker dropDownContainerStyle={{elevation: 999}}
-                    placeholder="filtre par date" key={"ddd"}
+                    placeholder={t("note2")} key={"ddd"}
                     open={open} value={value} listMode="SCROLLVIEW"
                     items={items} setOpen={setOpen}
                     setValue={setValue} setItems={setItems}
@@ -121,9 +114,9 @@ export default function Notes() {
 
     function Card({item}){
         return (<View style={style.card} key={item?.id}>
-            <Text style={[style.info, {fontSize: 10, color: front, maxWidth: "80%"}]}>devoir de {item?.cours?.libelle} du {moment(item?.date).format("DD/MM")}</Text>
+            <Text style={[style.info, {fontSize: 10, color: front, maxWidth: "80%"}]}> {item?.cours?.libelle} ({moment(item?.date).format("DD/MM")})</Text>
             <Text style={[style.info,{fontSize: 30, color: front}]}>{item?.note}</Text>
-            {!item?.copie ? <Text style={[style.info, { color: front}]}>....................</Text> : <Button title="votre copie" color={"green"} onPress={()=>nav.navigate("pdf", {document:  API+"/document/show/"+item?.copie?.libelle})} />}
+            {!item?.copie ? <Text style={[style.info, { color: front}]}>....................</Text> : <Button title={t("note3")} color={"green"} onPress={()=>nav.navigate("pdf", {document:  API+"/document/show/"+item?.copie?.libelle})} />}
         </View>);
     }
 

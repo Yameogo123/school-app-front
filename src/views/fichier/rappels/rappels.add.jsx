@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from "react";
-import { Text, Platform, KeyboardAvoidingView, View, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Alert, Keyboard } from "react-native";
+import { Text, View, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Alert, Keyboard } from "react-native";
 import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SimpleHeader from "../../../template/header/simpleHeader";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { Send, Update } from "../../../api/service";
-
+import { useTranslation } from "react-i18next";
 
 const handleHead = ({tintColor}) => <Text style={{color: tintColor}}>H1</Text>
 
@@ -18,15 +18,15 @@ const RappelAdd = () => {
     const [descHTML, setDescHTML] = useState(route?.params?.doc?.libelle || "");
     const back= useSelector((state)=>state.themeReducer.back);
     const dispatch= useDispatch();
-    const action= {type: "loading"}
+    const action= {type: "loading"};
 
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
     const loading= useSelector((state)=>state.userReducer.loading);
-
     const [isSending, setIsSending]= useState(false);
+    const [updated, setUpdated]= useState(route?.params?.doc ? route?.params?.doc :null);
 
-    const [updated, setUpdated]= useState(route?.params?.doc ? route?.params?.doc :null)
+    const {t, _}=useTranslation();
 
     const submitContentHandle = () => {
         // const replaceHTML = descHTML.replace(/<(.|\n)*?>/g, " ").trim();
@@ -68,12 +68,12 @@ const RappelAdd = () => {
                     (rp)=>{
                         if(rp?.error){
                             Toast.show({
-                                text1: "erreur", text2: "la création a échoué",
+                                text1: t("file4"), text2: t("file4"),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "rappel mémoire créé avec succès",
+                                text1: "message", text2: t("rappel8"),
                                 topOffset: 50
                             })
                             setUpdated(rp?.rappel);
@@ -82,13 +82,13 @@ const RappelAdd = () => {
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "problème de création",
+                        text1: t("file4"), text2: t("file4"),
                         topOffset: 50, type:"error"
                     })
                 })
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "rien à sauvegarder",
+                    text1: "erreur", text2: t("rappel9"),
                     topOffset: 50, type:"error"
                 })
             }
@@ -134,7 +134,7 @@ const RappelAdd = () => {
                             containerStyle={{ minHeight: "46%" }}
                             onChange={ descriptionText => {
                                 setDescHTML(descriptionText);
-                            }} placeholder="Ecrire ici.."
+                            }} placeholder={t("rappel9") + ".."}
                             initialContentHTML={descHTML}
                         />
 
