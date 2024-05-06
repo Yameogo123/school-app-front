@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Animated, StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView, Keyboard, TouchableWithoutFeedback, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import AdminHeader from "../../../template/header/adminHeader";
 import { CardThree } from "react-native-card-ui";
 import { Swipeable } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -11,6 +10,8 @@ import { Get, Remove } from "../../../api/service";
 import Toast from "react-native-toast-message";
 import moment from "moment";
 import prompt from "react-native-prompt-android";
+import SimpleHeader from "../../../template/header/simpleHeader";
+import { useTranslation } from "react-i18next";
 
 export default function AnnulerPlan(){
 
@@ -24,6 +25,7 @@ export default function AnnulerPlan(){
 
     const [jour, setJour] = useState(new Date());
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date;
@@ -42,7 +44,7 @@ export default function AnnulerPlan(){
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <AdminHeader />
+                return <SimpleHeader lk="planifier" />
             }, 
             headerShown: true
         })
@@ -105,8 +107,8 @@ export default function AnnulerPlan(){
                     setDeleted(!deleted);
                 }else{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "erreur d'annulation de l'évènement",
+                        text1: t("file4"),
+                        text2: t("file4"),
                         topOffset: 50, type:"error"
                     })
                 }
@@ -114,7 +116,7 @@ export default function AnnulerPlan(){
             }
         ).catch(()=>{
             Toast.show({
-                text1: "erreur", text2: "erreur d'annulation de l'évènement",
+                text1: t("file4"), text2: t("file4"),
                 topOffset: 50, type:"error"
             })
             setIsSending(false)
@@ -122,9 +124,9 @@ export default function AnnulerPlan(){
     }
 
     function handleDelete(ev){
-        prompt("voulez vous vraiment continuer?", " si oui, veuillez saisir votre mot de passe",[
+        prompt(t("rappel1"), t("admin18"), [
             {
-                text: "valider", 
+                text: t("continue"), 
                 onPress: (text)=>{
                     Get("/user/status/pass/"+text+"/"+user?._id, token).then(
                         (rs)=>{
@@ -136,8 +138,7 @@ export default function AnnulerPlan(){
                                 }
                             }else{
                                 Toast.show({
-                                    text1: "erreur",
-                                    text2: "verifier votre mot de passe",
+                                    text1: t("file4"), text2: t("admin21"),
                                     topOffset: 50, type:"error"
                                 })
                             }
@@ -145,7 +146,7 @@ export default function AnnulerPlan(){
                     ).catch(()=>{})
                 }
             },
-            {text: "annuler", style: "cancel"}
+            {text: t("cancel"), style: "cancel"}
         ],{
             type: "secure-text", cancelable: true
         })
@@ -156,7 +157,7 @@ export default function AnnulerPlan(){
             <View style={style.container}>
 
                 <View style={[style.block, {zIndex: 5, alignItems:"flex-start"}]}>
-                    <Text style={style.text}>Quel évènement (choix du jour) ? </Text>
+                    <Text style={style.text}>{t("admin46")} ? </Text>
                     {
                         Platform.OS==="android" ? <TouchableOpacity onPress={()=>showMode()} style={{backgroundColor: "white", padding: 15, borderRadius: 30}}>
                             <Text style={{color: chart}}>{moment(jour).format("YYYY-MM-DD")}</Text>
@@ -168,7 +169,7 @@ export default function AnnulerPlan(){
                 </View>
 
                 <ScrollView contentContainerStyle={style.block} scrollEnabled showsVerticalScrollIndicator={false}>
-                    <Text style={[style.text, {color: "white"}]}>(glisser à droite pour supprimer) </Text>
+                    <Text style={[style.text, {color: "white"}]}>({t('admin25')}) </Text>
                     {
                         events.length!==0 && 
                         events.map((ev, idx)=>{

@@ -10,6 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Get, Update } from "../../../api/service";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import prompt from "react-native-prompt-android";
+import { useTranslation } from "react-i18next";
 
 
 export default function SupprimeUser(){
@@ -26,6 +27,7 @@ export default function SupprimeUser(){
     const nav=  useNavigation();
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -68,9 +70,9 @@ export default function SupprimeUser(){
     };
 
     function handleDelete(us){
-        prompt("voulez vous vraiment continuer?", " si oui, veuillez saisir votre mot de passe",[
+        prompt(t("rappel1"), t("admin18"),[
             {
-                text: "valider", 
+                text: t("continue"), 
                 onPress: (text)=>{
                     Get("/user/status/pass/"+text+"/"+user?._id, token).then(
                         (rs)=>{
@@ -78,7 +80,7 @@ export default function SupprimeUser(){
                                 const util= {...us, archive: true}
                                 if(util?.type==="Directeur"){
                                     Toast.show({
-                                        text1: "erreur", text2: "NON!! c'est un directeur! Au prochain essaie il sera notifié",
+                                        text1: t("file4"), text2: t("admin19"),
                                         topOffset: 50, type:"error"
                                     })
                                     setSearch(""); setUsers([]);
@@ -88,19 +90,19 @@ export default function SupprimeUser(){
                                         (rp)=>{
                                             if(!rp?.error){
                                                 Toast.show({
-                                                    text1: "message", text2: "utilisateur archivé avec succès", topOffset: 50
+                                                    text1: "message", text2: t("admin20"), topOffset: 50
                                                 })
                                                 setSearch(""); setUsers([]);
                                             }else{
                                                 Toast.show({
-                                                    text1: "erreur",text2: "erreur de suppression",
+                                                    text1: t("file4"),text2: t("file4"),
                                                     topOffset: 50, type:"error"
                                                 })
                                             }
                                         }
                                     ).catch(()=>{
                                         Toast.show({
-                                            text1: "erreur", text2: "erreur de suppression",
+                                            text1: t("file4"), text2: t("file4"),
                                             topOffset: 50, type:"error"
                                         })
                                     })
@@ -108,14 +110,14 @@ export default function SupprimeUser(){
                                 }
                             }else{
                                 Toast.show({
-                                    text1: "erreur", text2: "verifier votre mot de passe", topOffset: 50, type:"error"
+                                    text1: t("file4"), text2: t("admin21"), topOffset: 50, type:"error"
                                 })
                             }
                         }
                     ).catch(()=>{})
                 }
             },
-            {text: "annuler", style:"cancel"}
+            {text: t("cancel"), style:"cancel"}
         ], {type: "secure-text"})
     }
 
@@ -127,15 +129,15 @@ export default function SupprimeUser(){
                     setUsers(rs?.users);
                 }else{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "aucun utilisateur avec ce nom",
+                        text1: t("file4"),
+                        text2: t("admin22"),
                         topOffset: 50, type:"error"
                     })
                 }
             }
         ).catch(()=>{
             Toast.show({
-                text1: "erreur", text2: "aucun utilisateur avec ce nom", topOffset: 50, type:"error"
+                text1: t("file4"), text2: t("admin22"), topOffset: 50, type:"error"
             })
         }) 
     }
@@ -150,8 +152,8 @@ export default function SupprimeUser(){
             <View style={style.container}>
                 
                 <View style={style.block}>
-                    <Text style={[style.text, {color: "white"}]}>Quel utilisateur ? </Text>
-                    <TextInput placeholder={"nom de famille"} inputStyle={{color:"black"}} onChangeText={setSearch}
+                    <Text style={[style.text, {color: "white"}]}>{t("admin23")} ? </Text>
+                    <TextInput placeholder={t("admin24")} inputStyle={{color:"black"}} onChangeText={setSearch}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                         value={search} trailing={<TouchableOpacity onPress={handleSearch}>
                             <Ionicons name="search" size={30} color={chart} />
@@ -160,7 +162,7 @@ export default function SupprimeUser(){
                 </View>
 
                 <ScrollView contentContainerStyle={style.block} onTouchStart={()=>Keyboard.dismiss()}>
-                    <Text style={[style.text, {color: "white"}]}>(glisser à droite pour supprimer) </Text>
+                    <Text style={[style.text, {color: "white"}]}>({t("admin25")}) </Text>
                     {
                         users.length!==0 && 
                         users.map((us, idx)=>{

@@ -12,6 +12,7 @@ import { Get, Remove } from "../../../api/service";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Svg, { Path } from 'react-native-svg';
 import prompt from "react-native-prompt-android";
+import { useTranslation } from "react-i18next";
 
 
 export default function AnnulerInscription(){
@@ -28,6 +29,7 @@ export default function AnnulerInscription(){
     const [open, setOpen]= useState(false);
 
     const nav=  useNavigation();
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -90,7 +92,7 @@ export default function AnnulerInscription(){
                     setInscriptions(rs?.inscriptions);
                 }else{
                     Toast.show({
-                        text1: "erreur", text2: "aucune inscription pour cet étudiant",
+                        text1: t("file4"), text2: t("admin33"),
                         topOffset: 50, type:"error"
                     })
                 }
@@ -99,9 +101,9 @@ export default function AnnulerInscription(){
     }
 
     function handleDelete(id){
-        prompt("voulez vous vraiment continuer?", " si oui, veuillez saisir votre mot de passe",[
+        prompt(t("rappel1"), t("admin18"), [
             {
-                text: "valider", 
+                text: t("continue"), 
                 onPress: (text)=>{
                     Get("/user/status/pass/"+text+"/"+user?._id, token).then(
                         (rs)=>{
@@ -110,25 +112,25 @@ export default function AnnulerInscription(){
                                     (rp)=>{
                                         if(!rp?.error){
                                             Toast.show({
-                                                text1: "message", text2: "Inscription annulée", topOffset: 50
+                                                text1: "message", text2: t("admin34"), topOffset: 50
                                             })
                                             setEleve(null); setInscriptions([]);
                                         }else{
                                             Toast.show({
-                                                text1: "erreur", text2: "erreur d'annulation de l'inscription",
+                                                text1:  t("file4"), text2:  t("file4"),
                                                 topOffset: 50, type:"error"
                                             })
                                         }
                                     }
                                 ).catch(()=>{
                                     Toast.show({
-                                        text1: "erreur", text2: "erreur de annulation de l'inscription",
+                                        text1:  t("file4"), text2:  t("file4"),
                                         topOffset: 50, type:"error"
                                     })
                                 })
                             }else{
                                 Toast.show({
-                                    text1: "erreur", text2: "verifier votre mot de passe",
+                                    text1:  t("file4"), text2:  t("admin21"),
                                     topOffset: 50, type:"error"
                                 })
                             }
@@ -136,7 +138,7 @@ export default function AnnulerInscription(){
                     ).catch(()=>{})
                 }
             },
-            {text: "annuler", style: "cancel"}
+            {text: t("cancel"), style: "cancel"}
         ], {
             type: "secure-text", cancelable: true
         })
@@ -147,8 +149,8 @@ export default function AnnulerInscription(){
             <View style={style.container}>
             
                 <View style={[style.block, {zIndex: 4}]}>
-                    <Text style={style.text}>Quel élève ? </Text>
-                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> getInsc(item?._id)}
+                    <Text style={style.text}>{t('admin31')} ? </Text>
+                    <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={(item)=> getInsc(item?._id)}
                         open={open} value={eleve} items={adaptSelect(eleves, 1)}
                         setOpen={setOpen} setValue={setEleve} searchable maxHeight={250}
                         setItems={setEleves} listMode="SCROLLVIEW" 
@@ -157,15 +159,15 @@ export default function AnnulerInscription(){
                 </View>
 
                 <ScrollView contentContainerStyle={[style.block, {zIndex: 3}]}>
-                    <Text style={style.text}>(glisser à droite pour annuler) </Text>
+                    <Text style={style.text}>({t('admin25')}) </Text>
                     {
                         inscriptions.length!==0 && 
                         inscriptions.map((ins, _)=>{
                             return (
                                 <Swipeable key={Math.floor(Math.random() * 100)} cancelsTouchesInView containerStyle={{marginLeft: -5, marginRight: -5}}
                                     renderLeftActions={(progress, dragAnimatedValue)=>renderLeftActions(progress, dragAnimatedValue, ins?._id)}>
-                                    <CardThree title={"année scolaire "+ins?.anneeScolaire} icon={"forward"} iconColor={"grey"}
-                                        subTitle={"Classe de "+ins?.classe?.libelle} 
+                                    <CardThree title={t("drawer18")+" "+ins?.anneeScolaire} icon={"forward"} iconColor={"grey"}
+                                        subTitle={t("drawer20")+" "+ins?.classe?.libelle} 
                                         profile={require("../../../../assets/icon.png")} key={Math.floor(Math.random() * 100)}/>
                                 </Swipeable>
                             );

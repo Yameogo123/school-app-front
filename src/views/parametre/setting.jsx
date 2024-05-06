@@ -82,7 +82,7 @@ export default function Setting() {
     function displayBlock(item, key){
         return (
             <TouchableOpacity style={style.display} key={key} onPress={item?.action}>
-                <Ionicons name={item?.icon} size={45} color={back} />
+                <Ionicons name={item?.icon} size={40} color={back} />
                 <Text style={style.text}>{item?.libelle}</Text>
             </TouchableOpacity>
         );
@@ -97,7 +97,7 @@ export default function Setting() {
             flexDirection: "row", alignItems: "center", borderRadius: 30, borderColor: chart,
             margin: 15,  borderWidth: 0.7, padding: 15, backgroundColor: "skyblue"
         },
-        text: {fontSize: 20, marginLeft: 40, color: back, fontWeight: "bold"},
+        text: {fontSize: 20, marginLeft: 40, color: back, fontWeight: "bold", alignItems:"center"},
         bottom: {justifyContent: "center"}
     })
 

@@ -9,7 +9,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Get, Remove, Send, Update } from "../../../api/service";
 import Toast from "react-native-toast-message";
 import prompt from 'react-native-prompt-android';
-
+import { useTranslation } from "react-i18next";
 
 export default function Classe(){
 
@@ -24,6 +24,7 @@ export default function Classe(){
     const nav=  useNavigation();
     const [tbHead, setTbHead]= useState(["libellé", "edit", "action"]);
     const [tbData, setTbData]= useState([]);
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -47,26 +48,26 @@ export default function Classe(){
     
 
     const handleRemove = (id) => {
-        Alert.alert("validation", "voulez vous vraiment supprimer cette classe", [
-            {text:"annuler"},
-            {text: "continuer", onPress: ()=>{
+        Alert.alert("validation", t("rappel1"), [
+            {text: t("cancel")},
+            {text: t("continue"), onPress: ()=>{
                 setLibelle("..");
                 Remove("/classe/"+id, token).then(
                     (rs)=>{
                         if(rs.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
+                                text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "classe bien supprimé", topOffset: 50
+                                text1: "message", text2: t("rappel8"), topOffset: 50
                             })
                             setLibelle("");
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
+                        text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -74,13 +75,13 @@ export default function Classe(){
     }
 
     const handleNew = () => {
-        prompt("nouveau", "veuillez saisir un libellé", [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt(t("admin60"), t("admin61"), [
+            {text:t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 const exist= tbData.find((val)=> val?.libelle=== text)!==undefined
                 if(exist){
                     Toast.show({
-                        text1: "erreur", text2: "cette salle existe déjà", topOffset: 50, type:"error"
+                        text1: t('file4'), text2: t("admin62"), topOffset: 50, type:"error"
                     })
                 }else{
                     setLibelle("..")
@@ -88,14 +89,12 @@ export default function Classe(){
                         (rs)=>{
                             if(rs?.error){ 
                                 Toast.show({
-                                    text1: "erreur",
-                                    text2: "erreur d'ajout de cours",
+                                    text1: t('file4'), text2: t('file4'),
                                     topOffset: 50, type:"error"
                                 })
                             }else{
                                 Toast.show({
-                                    text1: "message",
-                                    text2: "classe bien ajouté",
+                                    text1: "message", text2: t("admin5"),
                                     topOffset: 50
                                 })
                                 setLibelle("");
@@ -103,8 +102,7 @@ export default function Classe(){
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur",
-                            text2: "erreur d'ajout de classe",
+                            text1: t('file4'), text2: t('file4'),
                             topOffset: 50, type:"error"
                         })
                     })
@@ -116,22 +114,20 @@ export default function Classe(){
     }
 
     const handleEdit= (id) => {
-        prompt("modification", "veuillez saisir le nouveau libellé", [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt("modification", t("admin61"), [
+            {text: t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 setLibelle(".")
                 Update("/classe/update", {"classe": {"libelle": text, ecole: user?.ecole?._id, _id: id}}, true, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "erreur de modification de classe",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message",
-                                text2: "classe modifié",
+                                text1: "message", text2: t("admin58"),
                                 topOffset: 50
                             })
                             setLibelle("")
@@ -139,8 +135,7 @@ export default function Classe(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "erreur de modification de classe",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -185,14 +180,14 @@ export default function Classe(){
         <>
             <View style={style.container}>
                 <View style={style.block}>
-                    <TextInput placeholder={"filtrer par libelle"} inputStyle={{color:"black"}} onChangeText={setFilter}
+                    <TextInput placeholder={t("cours5")} inputStyle={{color:"black"}} onChangeText={setFilter}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                     />
                 </View>
                 <View style={style.part2} onTouchStart={()=>Keyboard.dismiss()}>
                     <View style={[style.block, {marginBottom: 80}]}>
                         <View style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginBottom: 15}}>
-                            <Text style={[style.text, {width: "64%"}]}>Liste des classes disponibles</Text>
+                            <Text style={[style.text, {width: "64%"}]}>{t('admin63')}</Text>
                             <View style={{width: "24%"}}>
                                 <TouchableOpacity onPress={() => handleNew()} style={[style.btn, {backgroundColor: back}]}>
                                     <Ionicons name="add" size={25} color={chart} />

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import AdminHeader from "../../../template/header/adminHeader";
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from "react-native";
 import AnimatedLottieView from "lottie-react-native";
-
+import { useTranslation } from "react-i18next";
 
 export default function Planifier(){
 
@@ -12,11 +12,12 @@ export default function Planifier(){
     const front= useSelector((state)=> state.themeReducer.front);
 
     const nav=  useNavigation();
+    const {t, _}=useTranslation();
 
     const plans=[
-        {id:1, libelle: "planifier un cours", uri: require("../../../../assets/calendar1.json"), link: "plan/cours"},
-        {id:2, libelle: "planifier un évènement", uri: require("../../../../assets/calendar2.json"), link: "plan/event"},
-        {id:2, libelle: "annuler planification", uri: require("../../../../assets/calendar3.json"), link: "plan/annuler"},
+        {id:1, libelle: t("admin35"), uri: require("../../../../assets/calendar1.json"), link: "plan/cours"},
+        {id:2, libelle: t("admin36"), uri: require("../../../../assets/calendar2.json"), link: "plan/event"},
+        {id:2, libelle: t("admin37"), uri: require("../../../../assets/calendar3.json"), link: "plan/annuler"},
     ]
 
     useEffect(()=>{

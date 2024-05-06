@@ -12,7 +12,7 @@ import Svg, { Path } from 'react-native-svg';
 import { launchImageLibrary } from "react-native-image-picker";
 import { TextInput } from "@react-native-material/core";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
+import { useTranslation } from "react-i18next";
 
 
 export default function Orientation(){
@@ -35,6 +35,7 @@ export default function Orientation(){
 
     const [open, setOpen]= useState(false);
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
     
 
     useEffect(() => {
@@ -85,11 +86,11 @@ export default function Orientation(){
             (rp)=>{
                 if(rp?.error){
                     Toast.show({
-                        text1: "erreur", text2: "la mise à jour de l'orientation a échoué", topOffset: 50, type:"error"
+                        text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message", text2: "document joint avec succès", topOffset: 50
+                        text1: "message", text2: t("qdmin3"), topOffset: 50
                     })
                 }
             }
@@ -109,7 +110,7 @@ export default function Orientation(){
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur", text2: "la création de l'orientation a échoué",
+                            text1: t("file4"), text2: t("file4"),
                             topOffset: 50, type:"error"
                         })
                     }else{
@@ -156,13 +157,13 @@ export default function Orientation(){
                                         upd({"orientation": orient2})
                                     }
                                 }
-                            ).catch((err)=>{console.log("err: "+err);})
+                            ).catch((err)=>{})
                         }
 
                         setTitre(""); setContenu(""); setClasse(""); setVideo(""); setCover("")
 
                         Toast.show({
-                            text1: "message", text2: "orientation créée avec succès",
+                            text1: "message", text2: t("rappel8"),
                             topOffset: 50
                         })
                         
@@ -172,7 +173,7 @@ export default function Orientation(){
             )
 
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t('missing1'), type: "error", topOffset: 60})
         }
     }
 
@@ -221,8 +222,8 @@ export default function Orientation(){
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5}}>
                             <View style={[style.block, {zIndex: 5, width: "45%"}]}>
-                                <Text style={style.text}>La classe concernée ? </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                <Text style={style.text}>{t('cours12')} ? </Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                     open={open} value={classe} items={adaptSelect(classes)}
                                     setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
                                     setItems={setClasses} listMode="SCROLLVIEW" 
@@ -231,41 +232,41 @@ export default function Orientation(){
                             </View>
 
                             <View style={[style.block, {zIndex: 5, width: "40%"}]}>
-                                <Text style={style.text}>Titre de l'orientation</Text>
+                                <Text style={style.text}>{t('admin80')}</Text>
                                 <TextInput {...props} textContentType="name" onChangeText={setTitre} value={titre} />
                             </View>
                         </View>
 
                         <View style={[style.block, {zIndex: 4}]}>
-                            <Text style={style.text}>Explications</Text>
+                            <Text style={style.text}>{t('admin82')}</Text>
                             <TextInput {...props} textContentType="name" onChangeText={setContenu} value={contenu} multiline />
                         </View>
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3}}>
                             <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                <Text style={style.text}>une vidéo ?</Text>
+                                <Text style={style.text}>video ?</Text>
                                 {video==="" ? <TouchableOpacity onPress={pickVideo} style={{backgroundColor: back, borderRadius: 10, padding: 10}}>
                                     <View style={{flexDirection: 'row', justifyContent: "center", alignItems: "center"}}>
                                         <Ionicons name="add-circle" color={chart} size={40} />
-                                        <Text style={[style.text, {color: front}]}>cliquer pour choisir le document</Text>
+                                        <Text style={[style.text, {color: front}]}>{t('cours7')}</Text>
                                     </View>
                                 </TouchableOpacity> : 
                                 <View style={{flexDirection: 'row', justifyContent: "space-between", alignItems: "center"}}>
-                                    <Text style={[style.text, {color: front}]}>document pris en compte</Text>
+                                    <Text style={[style.text, {color: front}]}>{t('admin3')}</Text>
                                     <Ionicons name="trash" color={"tomato"} size={30} onPress={()=>setVideo("")} />
                                 </View>}
                             </View>
 
                             <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                <Text style={style.text}>une couverture ?</Text>
+                                <Text style={style.text}>{t('admin81')} ?</Text>
                                 {cover==="" ? <TouchableOpacity onPress={pickImage} style={{backgroundColor: back, borderRadius: 10, padding: 10}}>
                                     <View style={{flexDirection: 'row', justifyContent: "center", alignItems: "center"}}>
                                         <Ionicons name="add-circle" color={chart} size={40} />
-                                        <Text style={[style.text, {color: front}]}>cliquer pour choisir le document</Text>
+                                        <Text style={[style.text, {color: front}]}>{t('cours7')}</Text>
                                     </View>
                                 </TouchableOpacity> : 
                                 <View style={{flexDirection: 'row', justifyContent: "space-between", alignItems: "center"}}>
-                                    <Text style={[style.text, {color: front}]}>document pris en compte</Text>
+                                    <Text style={[style.text, {color: front}]}>{t('admin3')}</Text>
                                     <Ionicons name="trash" color={"tomato"} size={30} onPress={()=>setCover("")} />
                                 </View>}
                             </View>
@@ -273,7 +274,7 @@ export default function Orientation(){
 
                         <View style={[style.block, {zIndex: 1, marginTop: 30}]}>
                             <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
+                                <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('continue')}</Text>
                             </TouchableOpacity>
                         </View>
 

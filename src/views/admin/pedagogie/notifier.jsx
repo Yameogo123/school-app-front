@@ -9,7 +9,7 @@ import { TextInput } from "@react-native-material/core";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Get, SendMessage } from "../../../api/service";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-
+import { useTranslation } from "react-i18next";
 
 
 export default function Notifier(){
@@ -28,12 +28,11 @@ export default function Notifier(){
 
     const [objects, setObjects]= useState([
         {libelle: 'bulletins disponibles'}, {libelle: 'rappel de paiement'},
-        {libelle: 'renvoi temporaire'},{libelle: 'autre'}
+        {libelle: 'renvoi temporaire'}, {libelle: 'autre'}
     ]);
     const [object, setObject]= useState(null);
     const [object1, setObject1]= useState(null);
     const [libelle, setLibelle]= useState("");
-
 
     const [open2, setOpen2]= useState(false);
     const [open3, setOpen3]= useState(false);
@@ -41,6 +40,7 @@ export default function Notifier(){
     const [isSending, setIsSending]= useState(false);
 
     const nav=  useNavigation();
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -67,9 +67,8 @@ export default function Notifier(){
             setIsSending(true);
             for(let x of item){
                 const opt={
-                    "app_key":"647606299B1A3647606299B1A4",
-                    "sender":"School",
-                    "content":"objet du message: "+object || object1+". Message: "+libelle,
+                    "app_key": "647606299B1A3647606299B1A4", "sender": "School",
+                    "content": "objet du message: " + object || object1 + ". Message: " + libelle,
                     "msisdn":[
                         x?.telephone
                     ]
@@ -79,10 +78,10 @@ export default function Notifier(){
                         //console.log(rs);
                         if(!rs?.error){
                             i= i+1
-                            Toast.show({text1: "Information", text2: "message envoyé avec succès", topOffset: 60});
+                            Toast.show({text1: "Information", text2: t("admin47"), topOffset: 60});
                             
                         }else{
-                            Toast.show({text1: "Erreur", text2: "erreur d'envoi du message", topOffset: 60, type: "error"});
+                            Toast.show({text1: t("file4"), text2: t("file4"), topOffset: 60, type: "error"});
                         }
                     }
                 ).catch((err)=> {});
@@ -92,7 +91,7 @@ export default function Notifier(){
             }
             setIsSending(false)
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t("missing1"), type: "error", topOffset: 60})
         }
     }
 
@@ -125,14 +124,14 @@ export default function Notifier(){
             {/* <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}> */}
                 <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                     <View style={style.head}>
-                        <Text style={style.title}>Envoyer un sms</Text>
-                        <Text style={[style.text, {color: front}]}>notifier urgement des utilisateurs</Text>
+                        <Text style={style.title}>{t("admin48")}</Text>
+                        <Text style={[style.text, {color: front}]}>{t('admin49')}</Text>
                     </View>
                     <View style={style.part2}>
 
                         <View style={[style.block, {zIndex: 5}]}>
-                            <Text style={style.text}>A qui ?</Text>
-                            <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
+                            <Text style={style.text}>{t('admin50')} ?</Text>
+                            <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem}
                                 open={open3} value={util} items={adaptSelect(users, 1)} searchable maxHeight={150}
                                 setOpen={setOpen3} setValue={setUtil} setItems={setUsers} multiple //theme="DARK"
                                 badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -142,8 +141,8 @@ export default function Notifier(){
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
                             <View style={[style.block, {zIndex: 4, width: "44%"}]}>
-                                <Text style={style.text}>A propos de </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" onSelectItem={(item)=> setAutre(item.libelle==="autre")}
+                                <Text style={style.text}>{t('admin51')}</Text>
+                                <DropDownPicker placeholder={t("comptabilite2")}  onSelectItem={(item)=> setAutre(item.libelle==="autre")}
                                     open={open2} value={object} items={adaptSelect(objects)}
                                     setOpen={setOpen2} setValue={setObject} searchable
                                     setItems={setObjects} maxHeight={150} listMode="SCROLLVIEW"
@@ -154,7 +153,7 @@ export default function Notifier(){
                             <View style={[style.block, {zIndex: 4, width: "44%"}]}>
                                 <Text style={style.text}></Text>
                                 {
-                                    autre && <TextInput placeholder={"object du message"} inputStyle={{color:"black"}} onChangeText={setObject1}
+                                    autre && <TextInput placeholder={t("admin52")} inputStyle={{color:"black"}} onChangeText={setObject1}
                                         {...props} textContentType="name" multiline
                                     />
                                 }
@@ -162,8 +161,8 @@ export default function Notifier(){
                         </View>
 
                         <View style={style.block}>
-                            <Text style={style.text}>contenu au message ? </Text>
-                            <TextInput placeholder={"écrire ici..."} inputStyle={{color:"black"}} onChangeText={setLibelle}
+                            <Text style={style.text}>{t("admin53")} ? </Text>
+                            <TextInput placeholder={t('rappel10')} inputStyle={{color:"black"}} onChangeText={setLibelle}
                                 {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                                 multiline
                             />
@@ -171,7 +170,7 @@ export default function Notifier(){
 
                         <View style={[style.block, {zIndex: 1}]}>
                             <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
+                                <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('admin54')}</Text>
                             </TouchableOpacity>
                         </View>
 

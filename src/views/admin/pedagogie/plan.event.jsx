@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useSelector } from "react-redux";
-import AdminHeader from "../../../template/header/adminHeader";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { adaptSelect } from "../../../api/functions";
 import { TextInput } from "@react-native-material/core";
@@ -11,6 +10,8 @@ import { Get, Send } from "../../../api/service";
 import Toast from "react-native-toast-message";
 import moment from "moment";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import SimpleHeader from "../../../template/header/simpleHeader";
+import { useTranslation } from "react-i18next";
 
 
 export default function PlanEvent(){
@@ -40,6 +41,7 @@ export default function PlanEvent(){
     const [fin, setFin] = useState(moment().add(1, "hour").toDate());
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
@@ -66,7 +68,7 @@ export default function PlanEvent(){
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <AdminHeader />
+                return <SimpleHeader lk="planifier" />
             }, 
             headerShown: true
         })
@@ -107,32 +109,33 @@ export default function PlanEvent(){
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur",
-                            text2: "erreur de programmation d'évènement",
+                            text1: t("file4"),
+                            text2: t("file4"),
                             topOffset: 50, type:"error"
                         })
                     }else{
                         Toast.show({
-                            text1: "message", text2: " évènement programmé avec succès", topOffset: 50
+                            text1: "message", text2: t("admin38"), topOffset: 50
                         })
                         setClasse([]); setLibelle(null); setSalle(null); 
                     }
                 }
             ).catch(()=>{
                 Toast.show({
-                    text1: "erreur", text2: "erreur de programmation d'évènement", topOffset: 50, type:"error"
+                    text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                 })
             })
             setIsSending(false)
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t("missing1"), type: "error", topOffset: 60})
         }
     }
 
 
     const style= StyleSheet.create({
         container: {
-            flex: 1, backgroundColor: back
+            //flex: 1, 
+            backgroundColor: back
         },
         head:{
             margin: 15, padding: 10, paddingTop: 20, paddingBottom: 20
@@ -151,17 +154,17 @@ export default function PlanEvent(){
     }
 
     return (
-        <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-            <View style={style.container}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+            <ScrollView style={style.container}>
                 <View style={style.head}>
-                    <Text style={style.title}>Planifier un évènement</Text>
-                    <Text style={[style.text, {color: front}]}>Veuillez remplir tous les champs</Text>
+                    <Text style={style.title}>{t('admin36')}</Text>
+                    <Text style={[style.text, {color: front}]}>{t("admin8")}</Text>
                 </View>
                 <View style={style.part2}>
 
                     <View style={style.block}>
-                        <Text style={[style.text, {color: "white"}]}>Contenu de l'évènement ? </Text>
-                        <TextInput placeholder={"écrire ici"} inputStyle={{color:"black"}} onChangeText={setLibelle}
+                        <Text style={[style.text, {color: "white"}]}>{t('admin45')} ? </Text>
+                        <TextInput placeholder={t('rappel10')} inputStyle={{color:"black"}} onChangeText={setLibelle}
                             {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                             multiline value={libelle}
                         />
@@ -169,8 +172,8 @@ export default function PlanEvent(){
 
                     <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 7}}>
                         <View style={[style.block, {zIndex: 6, width: "44%"}]}>
-                            <Text style={style.text}>Quelles classes ? </Text>
-                            <DropDownPicker placeholder="Veuillez choisir" 
+                            <Text style={style.text}>{t('cours12')} ? </Text>
+                            <DropDownPicker placeholder={t("comptabilite2")}
                                 open={open} value={classe} items={adaptSelect(classes)}
                                 setOpen={setOpen} setValue={setClasse} searchable maxHeight={250}
                                 setItems={setClasses} multiple mode="BADGE" listMode="SCROLLVIEW"
@@ -179,8 +182,8 @@ export default function PlanEvent(){
                         </View>
 
                         <View style={[style.block, {zIndex: 5, width: "44%"}]}>
-                            <Text style={style.text}>Quelle salle</Text>
-                            <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem2}
+                            <Text style={style.text}>{t("admin40")}</Text>
+                            <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem2}
                                 open={open2} value={salle} items={adaptSelect(salles)}
                                 setOpen={setOpen2} setValue={setSalle} searchable
                                 setItems={setSalles} maxHeight={150} listMode="SCROLLVIEW"
@@ -190,7 +193,7 @@ export default function PlanEvent(){
                     </View>
 
                     <View style={[style.block, {alignItems:"flex-start"}]}>
-                        <Text style={style.text}>le jour ? </Text>
+                        <Text style={style.text}>{t('admin41')} ? </Text>
                         {Platform.OS==="android" ? <TouchableOpacity onPress={()=>showMode("date", handleJour)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 25}]}>
                             <Text style={[style.text, {color: chart, textAlign: "center"}]}>{ moment(jour).format("YYYY-MM-DD") }</Text>
                         </TouchableOpacity>: <DateTimePicker 
@@ -201,7 +204,7 @@ export default function PlanEvent(){
 
                     <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                         <View style={[style.block, { width: "45%", alignItems:"flex-start"}]}>
-                            <Text style={style.text}>Heure de début ? </Text>
+                            <Text style={style.text}>{t('admin42')} ? </Text>
                             {Platform.OS==="android" ? 
                                 <TouchableOpacity onPress={()=>showMode("time", handleDateDebut)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 15}]}>
                                     <Text style={[style.text, {color: chart, textAlign: "center"}]}>{moment(debut).format("HH:mm:ss")}</Text>
@@ -212,7 +215,7 @@ export default function PlanEvent(){
                         </View>
 
                         <View style={[style.block, { width: "45%", alignItems:"flex-start"}]}>
-                            <Text style={style.text}>Heure de fin ? </Text>
+                            <Text style={style.text}>{t('admin43')} ? </Text>
                             {Platform.OS==="android" ? 
                                 <TouchableOpacity onPress={()=>showMode("time", handleDateFin)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 15}]}>
                                     <Text style={[style.text, {color: chart, textAlign: "center"}]}>{moment(fin).format("HH:mm:ss")}</Text>
@@ -225,15 +228,15 @@ export default function PlanEvent(){
                         </View>
                     </View>
 
-                    <View style={[style.block, {zIndex: 1}]}>
+                    <View style={[style.block, {zIndex: 1, paddingBottom: 70}]}>
                         <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 20}]}>
-                            <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
+                            <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('admin44')}</Text>
                         </TouchableOpacity>
                     </View>
 
                     
                 </View>
-            </View>
-        </TouchableWithoutFeedback>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }

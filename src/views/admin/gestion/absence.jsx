@@ -14,6 +14,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../../api/functions";
 import prompt from 'react-native-prompt-android';
+import { useTranslation } from "react-i18next";
 
 
 export default function Absence(){
@@ -43,6 +44,7 @@ export default function Absence(){
     const [open2, setOpen2]= useState(false);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
@@ -62,7 +64,7 @@ export default function Absence(){
         Get("/absence/all/school/"+user?.ecole?._id+"/"+user?.ecole?.anneeScolaire, token).then(
             (rs)=>{
                 if(!rs?.error){
-                    setTbData(rs?.absences)
+                    setTbData(rs?.absences);
                 }
             }
         ).catch(()=>{});
@@ -91,25 +93,24 @@ export default function Absence(){
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200, borderRadius: 50}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                     <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
                         <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5, }}>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quel élève ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    <Text style={style.text}>{t('admin31')} ? </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
                                         setOpen={setOpen1} setValue={setEleve} maxHeight={250} listMode="SCROLLVIEW"
-                                        setItems={setEleves} //theme="DARK"
-                                        //mode="BADGE"
+                                        setItems={setEleves} 
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
                                 </View>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quelle cours </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
+                                    <Text style={style.text}>{t('admin39')} </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable
                                         setOpen={setOpen2} setValue={setCour} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setCours} //theme="DARK"
@@ -119,7 +120,7 @@ export default function Absence(){
                             </View>
 
                             <View style={[style.block, {alignItems:"flex-start"}]}>
-                                <Text style={style.text}>date du d'absence ? </Text>
+                                <Text style={style.text}>{t('admin41')} </Text>
                                 <DateTimePicker 
                                     value={date} mode={"date"} is24Hour={true}
                                     onChange={handleJour}
@@ -127,15 +128,15 @@ export default function Absence(){
                             </View>
 
 
-                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                                 <View >
-                                    <TouchableOpacity onPress={()=>{setShow(false); setStatus("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                        <Text style={style.text}>Annuler</Text>
+                                    <TouchableOpacity onPress={()=>{setShow(false); setStatus("")}} style={[style.btn2, {backgroundColor: "red",  marginRight: 30}]}>
+                                        <Text style={style.text}>{t('cancel')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
-                                        <Text style={style.text}>Ajouter</Text>
+                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green",  marginLeft: 30}]}>
+                                        <Text style={style.text}>{t('continue')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -146,27 +147,27 @@ export default function Absence(){
     }
 
     const handleRemove = (id) => {
-        Alert.alert("validation", "voulez vous vraiment supprimer cette absence", [
-            {text: "annuler"},
-            {text: "continuer", onPress: ()=>{
+        Alert.alert("validation", t('rappel1'), [
+            {text: t("cancel")},
+            {text: t("continue"), onPress: ()=>{
                 setStatus("..")
                 Remove("/absence/"+id, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             });
                         }else{
                             Toast.show({
-                                text1: "message", text2: "absence bien supprimée", topOffset: 50
+                                text1: "message", text2: t("admin55"), topOffset: 50
                             });
                             setStatus("");
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
+                        text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -177,7 +178,7 @@ export default function Absence(){
         const exist= tbData.find((val)=> val?.user=== eleve && moment(val?.date).format("YYYY-MM-DD")===moment(date).format("YYYY-MM-DD") && val?.cours===cour)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur", text2: "cette absence est déjà marquée déjà",
+                text1: t('file4'), text2: t("admin56"),
                 topOffset: 50, type:"error"
             })
         }else{
@@ -193,13 +194,13 @@ export default function Absence(){
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "erreur d'ajout d'absence",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             })
                             setIsSending(false);
                         }else{
                             Toast.show({
-                                text1: "message", text2: "absence bien ajoutée",
+                                text1: "message", text2: t("admin5"),
                                 topOffset: 50
                             })
                             setStatus(""); setEleve(""); setCour("");
@@ -208,7 +209,7 @@ export default function Absence(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "erreur d'ajout de note",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                     setIsSending(false);
@@ -219,19 +220,19 @@ export default function Absence(){
 
     const handleEdit= (id) => {
         const abs= tbData.find((val)=> val?._id=== id)
-        prompt("modification", "changement du status", [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt("modification", t("admin57"), [
+            {text: t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 Update("/absence/update", {"absence": {...abs, status: text, _id: id}}, true, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "erreur de modification de l'absence",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "absence modifiée", topOffset: 50
+                                text1: "message", text2: t("admin58"), topOffset: 50
                             })
                             setStatus(".."); setEleve(""); setCour("");
                             setShow(false);
@@ -239,7 +240,7 @@ export default function Absence(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "erreur de modification de l'absence", topOffset: 50, type:"error"
+                        text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -289,14 +290,14 @@ export default function Absence(){
         <>
             <View style={style.container}>
                 <View style={style.block}>
-                    <TextInput placeholder={"filtrer par nom élève"} inputStyle={{color:"black"}} onChangeText={setFilter}
+                    <TextInput placeholder={t("cours3")} inputStyle={{color:"black"}} onChangeText={setFilter}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                     />
                 </View>
                 <View style={style.part2} onTouchStart={()=>Keyboard.dismiss()}>
                     <View style={[style.block, {marginBottom: 80}]}>
                         <View style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginBottom: 15}}>
-                            <Text style={[style.text, {width: "64%"}]}>Liste des absences</Text>
+                            <Text style={[style.text, {width: "64%"}]}>{t('admin59')}</Text>
                             <View style={{width: "24%"}}>
                                 <TouchableOpacity onPress={()=> setShow(true)} style={[style.btn, {backgroundColor: back}]}>
                                     <Ionicons name="add" size={25} color={chart} />

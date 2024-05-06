@@ -110,7 +110,7 @@ function Menu(props){
 
                         <View style={{flexDirection: "row"}}>
                             <Ionicons name="reader" color={back} size={iconSize} />
-                            <Text style={style.title}>Inscription:</Text>
+                            <Text style={style.title}>{t('admin91')}:</Text>
                         </View>
                         <TouchableOpacity style={{backgroundColor: page==="inscription/add"? "blue": "skyblue", borderTopLeftRadius: 20, borderBottomLeftRadius: 20, padding: 5}} onPress={()=>{nav.navigate("inscription/add"); setPage("inscription/add")}}>
                             <Text style={style.text}>{t('drawer1')}</Text>

@@ -13,7 +13,7 @@ export default function Rappels(){
     const nav= useNavigation();
     const [elements, setElements]=useState([]);
     const back= useSelector((state)=>state.themeReducer.back);
-    //const chart= useSelector((state)=>state.themeReducer.chart);
+    const chart= useSelector((state)=>state.themeReducer.chart);
 
     const token= useSelector((state)=> state.userReducer.token);
     const user= useSelector((state)=> state.userReducer.user);
@@ -42,7 +42,6 @@ export default function Rappels(){
     useMemo(()=>{
         Get("/rappel/all/user/"+user?._id+"/false", token).then(
             (rs)=>{
-                //console.log(rs);
                 if(!rs?.error){ 
                     setElements(rs?.rappels)
                 }
@@ -155,7 +154,7 @@ export default function Rappels(){
                     })
                 }
             </ScrollView>
-            {elements.length <50 && <TouchableOpacity style={{position: "absolute", bottom: 5, backgroundColor: "green", borderRadius: 15, padding: 5, left: 10}} onPress={()=>nav.navigate("rappel/add")}>
+            {elements.length <50 && <TouchableOpacity style={{position: "absolute", bottom: 5, backgroundColor: chart, borderRadius: 15, padding: 5, left: 10}} onPress={()=>nav.navigate("rappel/add")}>
                 <Ionicons name="add" color={back} size={35} />
             </TouchableOpacity>}
         </View>

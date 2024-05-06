@@ -9,6 +9,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../../api/functions";
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from "react-i18next";
 
 
 export default function Bulletin(){
@@ -37,11 +38,12 @@ export default function Bulletin(){
     const [open2, setOpen2]= useState(false);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     useEffect(() => {
         nav.setOptions({
             header : ()=> {
-                return <AdminHeader  />
+                return <AdminHeader />
             }, 
             headerShown: true
         }) 
@@ -51,7 +53,6 @@ export default function Bulletin(){
         if(periode!==""){
             Get("/note/all/eleve/"+user?._id+"/"+periode+"/"+user?.ecole?.anneeScolaire, token).then(   
                 (rs)=>{
-                    //console.log(rs);
                     if(!rs.error){
                         setNotes(rs?.notes);
                     }
@@ -134,8 +135,8 @@ export default function Bulletin(){
             <View style={style.part2}>
 
                 <View style={[style.block, {zIndex: 5}]}>
-                    <Text style={style.text}>Quel semestre ? </Text>
-                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                    <Text style={style.text}>{t('admin90')} ? </Text>
+                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                         open={open1} value={periode} items={adaptSelect(periodes)}
                         setOpen={setOpen1} setValue={setPeriode} maxHeight={150} listMode="SCROLLVIEW"
                         setItems={setPeriodes} //theme="DARK"
@@ -146,7 +147,7 @@ export default function Bulletin(){
                 <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
                     <View style={[style.block, {zIndex: 4, width: "40%"}]}>
                         <Text style={style.text}>Quelle classe ? </Text>
-                        <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                        <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                             open={open} value={classe} items={adaptSelect(classes)}
                             setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
                             setItems={setClasses} listMode="SCROLLVIEW" 

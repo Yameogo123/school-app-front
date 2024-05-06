@@ -8,7 +8,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { adaptSelect } from "../../../api/functions";
 import { Get, Send } from "../../../api/service";
 import { TextInput } from "@react-native-material/core";
-
+import { useTranslation } from "react-i18next";
 
 export default function AddInscription(){
 
@@ -34,6 +34,7 @@ export default function AddInscription(){
     const [open2, setOpen2]= useState(false);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     const nav=  useNavigation();
 
@@ -81,7 +82,7 @@ export default function AddInscription(){
         if(classe!==null & eleve !==null & reglement!==null & montant!==""){
             let mt= parseFloat(montant);
             if(isNaN(mt)){
-                Toast.show({text1: "Erreur", text2: "Veuillez saisir un montant valide", type: "error", topOffset: 60})
+                Toast.show({text1: t("file4"), text2: t("admin26"), type: "error", topOffset: 60})
                 return 
             }
             let inscrip= {
@@ -91,7 +92,7 @@ export default function AddInscription(){
             const exist= inscriptions.find((ins)=> ins?.eleve===eleve && ins?.anneeScolaire===user?.ecole?.anneeScolaire)!==undefined;
             if(exist){
                 Toast.show({
-                    text1: "erreur", text2: "cet étudiant est déjà inscrit pour cette année",
+                    text1: t("file4"), text2: t("admin27"),
                     topOffset: 50, type:"error"
                 })
             }else{
@@ -100,12 +101,12 @@ export default function AddInscription(){
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "erreur de modification de classe",
+                                text1: t("file4"), text2: t("admin28"),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "élève inscrit", topOffset: 50
+                                text1: "message", text2: t("admin29"), topOffset: 50
                             })
                             setClasse(null); setEleve(null); setReglement(null);
                         }
@@ -113,13 +114,13 @@ export default function AddInscription(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "erreur de modification de classe", topOffset: 50, type:"error"
+                        text1: t("file4"), text2: t("admin28"), topOffset: 50, type:"error"
                     })
                     setIsSending(false);
                 })
             }
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t("missing1"), type: "error", topOffset: 60})
         }
     }
 
@@ -150,15 +151,15 @@ export default function AddInscription(){
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
                     <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                         <View style={style.head}>
-                            <Text style={style.title}>Nouvelle inscription</Text>
-                            <Text style={[style.text, {color: front}]}>Veuillez remplir toutes les étapes</Text>
+                            <Text style={style.title}>{t('admin30')}</Text>
+                            <Text style={[style.text, {color: front}]}>{t("admin8")}</Text>
                         </View>
 
                         <View style={style.part2}>
 
                             <View style={[style.block, {zIndex: 5}]}>
-                                <Text style={style.text}>Quelle élève ? </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                <Text style={style.text}>{t('admin31')} ? </Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                     open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
                                     setOpen={setOpen1} setValue={setEleve} maxHeight={150} listMode="SCROLLVIEW"
                                     setItems={setEleves} //theme="DARK"
@@ -169,8 +170,8 @@ export default function AddInscription(){
 
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 4}}>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quelle classe ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir"
+                                    <Text style={style.text}>{t("cours12")} ? </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")}
                                         open={open} value={classe} items={adaptSelect(classes)}
                                         setOpen={setOpen} setValue={setClasse} searchable maxHeight={150}
                                         setItems={setClasses} listMode="SCROLLVIEW" 
@@ -179,14 +180,14 @@ export default function AddInscription(){
                                 </View>
 
                                 <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                    <Text style={style.text}>Montant payé </Text>
+                                    <Text style={style.text}>{t("admin32")}</Text>
                                     <TextInput {...props} value={montant} onChangeText={setMontant} />
                                 </View>
                             </View>
 
                             <View style={[style.block, {zIndex: 2}]}>
-                                <Text style={style.text}>Type de règlement </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                <Text style={style.text}>{t('comptabilite1')} </Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                     open={open2} value={reglement} items={adaptSelect(reglements)}
                                     setOpen={setOpen2} setValue={setReglement} maxHeight={100}
                                     setItems={setReglements} listMode="SCROLLVIEW" //theme="DARK"
@@ -196,7 +197,7 @@ export default function AddInscription(){
 
                             <View style={[style.block, {zIndex: 1}]}>
                                 <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                    <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
+                                    <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('continue')}</Text>
                                 </TouchableOpacity>
                             </View>
 

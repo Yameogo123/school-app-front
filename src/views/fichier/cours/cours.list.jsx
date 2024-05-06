@@ -75,56 +75,56 @@ export default function CoursListe() {
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 250, flex: 1}}
+            <RNModal style={{backgroundColor: "lightsalmon", margin: 15, marginTop: 150, marginBottom: 250, flex: 1, borderRadius: 40}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
-                    <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} style={{flex: 1}}>
-                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
-                            <View>
-                                
-                                <View style={[style.block, {zIndex: 3}]}>
-                                    <TextInput placeholder={t("cours6")+" *"} inputStyle={{color:"black"}} onChangeText={setLabel}
-                                        {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
-                                        multiline
+                <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()} style={{flex: 1}}>
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
+                        <View>
+                            
+                            <View style={[style.block, {zIndex: 3}]}>
+                                <TextInput placeholder={t("cours6")+" *"} inputStyle={{color:"black"}} onChangeText={setLabel}
+                                    {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
+                                    multiline
+                                />
+                            </View>
+
+                            <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3, alignItems: "center"}}>
+                            
+                                <View style={[style.block, {zIndex: 4, width: "45%"}]}>
+                                    <Text style={style.text}>{t('cours12')}</Text>
+                                    <DropDownPicker placeholder={t('comptabilite2')} //onSelectItem={setItem}
+                                        open={open2} value={classe} items={adaptSelect(classes)} searchable listMode="SCROLLVIEW"
+                                        setOpen={setOpen2} setValue={setClasse} maxHeight={250} setItems={setClasses} 
+                                        //theme="DARK"
+                                        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
                                 </View>
 
-                                <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3, alignItems: "center"}}>
-                                
-                                    <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                        <Text style={style.text}>Quelle classe </Text>
-                                        <DropDownPicker placeholder={t('comptabilite2')} //onSelectItem={setItem}
-                                            open={open2} value={classe} items={adaptSelect(classes)} searchable listMode="SCROLLVIEW"
-                                            setOpen={setOpen2} setValue={setClasse} maxHeight={250} setItems={setClasses} 
-                                            //theme="DARK"
-                                            badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                                        />
-                                    </View>
-
-                                    <View style={[style.block, {zIndex: 2, width: "45%"}]}>
-                                        <Text style={style.text}>  </Text>
-                                        <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
-                                            <Text style={[style.text, {color: "black"}]}>{!file ? t("cours7") : t("cours8")}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
+                                <View style={[style.block, {zIndex: 2, width: "45%"}]}>
+                                    <Text style={style.text}>  </Text>
+                                    <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
+                                        <Text style={[style.text, {color: "black"}]}>{!file ? t("cours7") : t("cours8")}</Text>
+                                    </TouchableOpacity>
                                 </View>
 
-                                <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around", 'marginTop': 30}}>
-                                    <View >
-                                        <TouchableOpacity onPress={()=>{setShow(false); setLabel("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                            <Text style={style.text}>{t('cancel')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View >
-                                        <TouchableOpacity disabled={isSending} onPress={handleAdd} style={[style.btn2, {backgroundColor: "green"}]}>
-                                            <Text style={style.text}>{t('drawer1')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
+                            </View>
+
+                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around", 'marginTop': 30}}>
+                                <View >
+                                    <TouchableOpacity onPress={()=>{setShow(false); setLabel("")}} style={[style.btn2, {backgroundColor: "red"}]}>
+                                        <Text style={style.text}>{t('cancel')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View >
+                                    <TouchableOpacity disabled={isSending} onPress={handleAdd} style={[style.btn2, {backgroundColor: "green"}]}>
+                                        <Text style={style.text}>{t('drawer1')}</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                        </KeyboardAvoidingView>
-                    </TouchableWithoutFeedback>
+                        </View>
+                    </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>
             </RNModal>
         );
     }
@@ -208,7 +208,7 @@ export default function CoursListe() {
         input:{borderRadius: 30},
         lottie:{position:"absolute", width: "100%", height:"100%"}, 
         text: {fontSize: 15, padding: 5, fontStyle: "italic", color: back, fontWeight: "bold"},
-        btn2:{backgroundColor: "red",  borderRadius: 2, justifyContent: "center", alignItems: "center", margin: 2}
+        btn2:{backgroundColor: "red",  borderRadius: 2, justifyContent: "center", alignItems: "center", margin: 2, width: 100}
     })
 
     const handleDocumentSelection = useCallback(async () => {

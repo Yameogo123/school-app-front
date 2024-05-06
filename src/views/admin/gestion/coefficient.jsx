@@ -12,6 +12,7 @@ import RNModal from "react-native-modal";
 import DropDownPicker from "react-native-dropdown-picker";
 import { adaptSelect } from "../../../api/functions";
 import prompt from 'react-native-prompt-android';
+import { useTranslation } from "react-i18next";
 
 
 export default function Coefficient(){
@@ -41,6 +42,7 @@ export default function Coefficient(){
     const [open2, setOpen2]= useState(false);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -89,15 +91,15 @@ export default function Coefficient(){
         }: {}
 
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200, paddingTop:  100}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 150, marginBottom: 200, paddingTop:  100, borderRadius: 50}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                     <KeyboardAvoidingView {...behave} style={{flex: 1}}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5 }}>
                                 <View style={[style.block, {zIndex: 4, width: "47%"}]}>
-                                    <Text style={style.text}>Quelle classe ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    <Text style={style.text}>{t('cours12')} ? </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={classe} items={adaptSelect(classes)} searchable
                                         setOpen={setOpen1} setValue={setClasse} maxHeight={150} listMode="SCROLLVIEW"
                                         setItems={setClasses} //theme="DARK"
@@ -106,8 +108,8 @@ export default function Coefficient(){
                                     />
                                 </View>
                                 <View style={[style.block, {zIndex: 4, width: "47%"}]}>
-                                    <Text style={style.text}>Quelle matière </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setItem}
+                                    <Text style={style.text}>{t('admin39')}</Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable setItems={setCours}
                                         setOpen={setOpen2} setValue={setCour} maxHeight={150} //theme="DARK"
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -118,20 +120,20 @@ export default function Coefficient(){
                             </View>
 
                             <View style={[style.block, {zIndex: 3}]}>
-                                <TextInput placeholder={"coefficient de la matière"} inputStyle={{color:"black"}} onChangeText={setCoef}
+                                <TextInput placeholder={t("admin65")} inputStyle={{color:"black"}} onChangeText={setCoef}
                                     {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                                 />
                             </View>
 
-                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
+                            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around", marginTop: 30}}>
                                 <View >
-                                    <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                        <Text style={style.text}>Annuler</Text>
+                                    <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red", width: 150}]}>
+                                        <Text style={style.text}>{t('cancel')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View >
-                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
-                                        <Text style={style.text}>Ajouter</Text>
+                                    <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green", width: 150}]}>
+                                        <Text style={style.text}>{t('continue')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -142,20 +144,20 @@ export default function Coefficient(){
     }
 
     const handleRemove = (id) => {
-        Alert.alert("validation", "voulez vous vraiment supprimer ce coefficient", [
-            {text: "annuler"},
-            {text: "continuer", onPress: ()=>{
+        Alert.alert("validation", t("rappel1"), [
+            {text: t("cancel")},
+            {text: t("continue"), onPress: ()=>{
                 setLibelle("..")
                 Remove("/coefficient/"+id, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             });
                         }else{
                             Toast.show({
-                                text1: "message", text2: "coefficient bien supprimé",
+                                text1: "message", text2: t("rappel8"),
                                 topOffset: 50
                             });
                             setLibelle("");
@@ -163,7 +165,7 @@ export default function Coefficient(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -175,7 +177,7 @@ export default function Coefficient(){
         const exist= tbData.find((val)=> val?.classe=== classe && val?.valeur===coef && val?.cours===cour)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur", text2: "ce coefficient existe déjà",
+                text1: t('file4'), text2: t("cours9"),
                 topOffset: 50, type:"error"
             })
         }else{
@@ -183,7 +185,7 @@ export default function Coefficient(){
                 const n= parseFloat(coef)
                 if(isNaN(n)){
                     Toast.show({
-                        text1: "erreur", text2: "ce coefficient n'est pas valide",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 }else{
@@ -195,13 +197,13 @@ export default function Coefficient(){
                         (rs)=>{
                             if(rs?.error){
                                 Toast.show({
-                                    text1: "erreur", text2: "erreur d'ajout de coefficient",
+                                    text1: t('file4'), text2: t('file4'),
                                     topOffset: 50, type:"error"
                                 })
                             }else{
 
                                 Toast.show({
-                                    text1: "message", text2: "coefficient bien ajouté",
+                                    text1: "message", text2: t('rappel8'),
                                     topOffset: 50
                                 })
                                 setShow(false); setClasse(""); setCour(""); setCoef("")
@@ -210,14 +212,14 @@ export default function Coefficient(){
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur", text2: "erreur d'ajout de coefficient", topOffset: 50, type:"error"
+                            text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                         })
                         setIsSending(false)
                     })
                 }
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "veuillez remplir les champs", topOffset: 50, type:"error"
+                    text1: t('file4'), text2: t("missing1"), topOffset: 50, type:"error"
                 })
             }
         }
@@ -225,14 +227,14 @@ export default function Coefficient(){
 
     const handleEdit= (id) => {
         const coeff= tbData.find((val)=> val?._id=== id)
-        prompt("modification", "changement de la valeur du coefficient", [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt("modification", t("admin66"), [
+            {text: t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 setLibelle(".");
                 const nt= parseFloat(text);
                 if(isNaN(nt)){
                     Toast.show({
-                        text1: "erreur", text2: "erreur de mise à jour",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 }else{
@@ -240,12 +242,12 @@ export default function Coefficient(){
                         (rs)=>{
                             if(rs?.error){
                                 Toast.show({
-                                    text1: "erreur", text2: "erreur de modification de la coefficient",
+                                    text1: t('file4'), text2: t('file4'),
                                     topOffset: 50, type:"error"
                                 })
                             }else{
                                 Toast.show({
-                                    text1: "message", text2: "coefficient modifié", topOffset: 50
+                                    text1: "message", text2: t('admin58'), topOffset: 50
                                 })
                                 setLibelle("")
                                 setShow(false)
@@ -253,7 +255,7 @@ export default function Coefficient(){
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur", text2: "erreur de modification de la coef",
+                            text1: t('file4'), text2: t('file4'),
                             topOffset: 50, type:"error"
                         })
                     })
@@ -306,14 +308,14 @@ export default function Coefficient(){
         <>
             <View style={style.container}>
                 <View style={style.block}>
-                    <TextInput placeholder={"filtrer par classe"} inputStyle={{color:"black"}} onChangeText={setFilter}
+                    <TextInput placeholder={t("admin64")} inputStyle={{color:"black"}} onChangeText={setFilter}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                     />
                 </View>
                 <View style={style.part2} onTouchStart={()=>Keyboard.dismiss()}>
                     <View style={[style.block, {marginBottom: 80}]}>
                         <View style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginBottom: 15}}>
-                            <Text style={[style.text, {width: "64%"}]}>Liste des coefficients</Text>
+                            <Text style={[style.text, {width: "64%"}]}>{t('admin67')}</Text>
                             <View style={{width: "24%"}}>
                                 <TouchableOpacity onPress={()=> setShow(true)} style={[style.btn, {backgroundColor: back}]}>
                                     <Ionicons name="add" size={25} color={chart} />
@@ -326,11 +328,11 @@ export default function Coefficient(){
                                 {
                                     tbData?.filter((el)=> el?.classe?.libelle?.toLowerCase().includes(filter?.toLowerCase())).map((row) => (
                                         <TableWrapper key={Math.random()} style={style.row}>
-                                            <Cell key={Math.random()} data={row?.classe?.libelle} style={{width: "25%"}} textStyle={style.text}/>
-                                            <Cell key={Math.random()} data={row?.cours?.libelle} style={{width: "30%"}} textStyle={style.text}/>
-                                            <Cell key={Math.random()} data={row?.valeur} textStyle={style.text}/>
+                                            <Cell key={Math.random()} data={row?.classe?.libelle} style={{width: "20%"}} textStyle={style.text}/>
+                                            <Cell key={Math.random()} data={row?.cours?.libelle} style={{width: "45%"}} textStyle={style.text}/>
+                                            <Cell key={Math.random()} data={row?.valeur} style={{width: "10%"}} textStyle={style.text}/>
                                             {/* <Cell key={Math.random()} data={element1(row?._id)} textStyle={style.text}/> */}
-                                            <Cell key={Math.random()} data={element(row?._id)} textStyle={style.text}/>
+                                            <Cell key={Math.random()} data={element(row?._id)} style={{width: "20%"}} textStyle={style.text}/>
                                         </TableWrapper>
                                     )) 
                                 }

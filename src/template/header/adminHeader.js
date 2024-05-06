@@ -13,12 +13,8 @@ export default function AdminHeader({show=true}){
 
     const style= StyleSheet.create({
         content:{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            margin: 10,
-            padding: 10,
-            alignItems: "center"
+            display: "flex", flexDirection: "row", justifyContent: "space-between",
+            margin: 10, padding: 10, alignItems: "center"
         },
         img:{
             width: 50, height: 50

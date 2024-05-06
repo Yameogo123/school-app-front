@@ -12,6 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import * as DocumentPicker from 'expo-document-picker';
 import { launchImageLibrary } from "react-native-image-picker";
 import { Send, Update } from "../../../api/service";
+import { useTranslation } from "react-i18next";
 
 
 export default function AddUser(){
@@ -49,6 +50,7 @@ export default function AddUser(){
     const [photo, setPhoto] = useState("");
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     let swit= [
         {label:"identité", value:"identité"}, {label:"adresse", value:"adresse"}, 
@@ -91,12 +93,12 @@ export default function AddUser(){
             (rp)=>{
                 if(rp?.error){
                     Toast.show({
-                        text1: "erreur", text2: "la mise à jour de l'utilisateur a échoué",
+                        text1: t("file4"), text2: t("admin2"),
                         topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message", text2: "document joint avec succès", topOffset: 50
+                        text1: "message", text2: t("admin3"), topOffset: 50
                     })
                     setPassword(""); setNom(""); setPrenom(""); setNumb(""); setAdress("");
                     setPassport(""); setPhoto("");
@@ -122,7 +124,7 @@ export default function AddUser(){
                 (rs)=>{
                     if(rs.error){
                         Toast.show({
-                            text1: "erreur", text2: "la création de l'utilisateur a échoué",
+                            text1: "erreur", text2: t("admin4"),
                             topOffset: 50, type:"error"
                         })
                     }else{
@@ -174,7 +176,7 @@ export default function AddUser(){
                         //envoie des identifiants par message 
 
                         Toast.show({
-                            text1: "message", text2: "utilisateur créé avec succès", topOffset: 50
+                            text1: "message", text2: t("admin5"), topOffset: 50
                         })
                         setPassword(""); setNom(""); setPrenom(""); setNumb(""); setAdress("");
                         setPassport(""); setPhoto(""); setSelected("identité");
@@ -184,7 +186,7 @@ export default function AddUser(){
             setIsSending(false);
 
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t("missing1"), type: "error", topOffset: 60})
         }
     }
 
@@ -209,7 +211,7 @@ export default function AddUser(){
             }
         } catch (err) {
             //console.warn(err);
-            Toast.show({text1: "Information", text2: "aucun fichier sélectionné", type: "info"})
+            Toast.show({text1: "Information", text2: t("file3"), type: "info"})
         }
     }, []);
 
@@ -228,7 +230,7 @@ export default function AddUser(){
         btn: {shadowColor: "black", shadowOffset: {width: 0.5, height: 1}, shadowOpacity: 0.4, shadowRadius: 20}
     });
 
-    let behave= Platform.OS==="ios" ? {
+    let behave = Platform.OS==="ios" ? {
         behavior:"height"
     }: {}
 
@@ -247,16 +249,16 @@ export default function AddUser(){
                     </View>
                     <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
                         <View style={style.head}>
-                            <Text style={style.title}>Nouvel utilisateur</Text>
-                            <Text style={[style.text, {color: front}]}>Veuillez remplir toutes les étapes</Text>
+                            <Text style={style.title}>{t("admin7")}</Text>
+                            <Text style={[style.text, {color: front}]}>{t('admin8')}</Text>
                         </View>
 
                         { selected==="identité" && <View style={style.part2}>
 
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5}}>
                                 <View style={[style.block, {zIndex: 4, width: "40%"}]}>
-                                    <Text style={style.text}>Votre civilité* ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    <Text style={style.text}>{t('admin9')}* ? </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                         open={open} value={civilite} items={adaptSelect(civilites)}
                                         setOpen={setOpen} setValue={setCivilite} maxHeight={250}
                                         setItems={setCivilites}  listMode="SCROLLVIEW"
@@ -264,8 +266,8 @@ export default function AddUser(){
                                     />
                                 </View>
                                 <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                    <Text style={style.text}>Type de profil* </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    <Text style={style.text}>{t("admin10")}* </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                         open={open2} value={type} items={adaptSelect(types)}
                                         setOpen={setOpen2} setValue={setType} listMode="SCROLLVIEW"
                                         setItems={setTypes} //theme="DARK"
@@ -278,11 +280,11 @@ export default function AddUser(){
 
                             <View style={[style.block, {zIndex: 2, flexDirection: "row", justifyContent: "space-between"}]}>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>Nom *</Text>
+                                    <Text style={style.text}>{t("admin11")} *</Text>
                                     <TextInput {...props} textContentType="name" onChangeText={setNom} value={nom} />
                                 </View>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>Prénom(s) *</Text>
+                                    <Text style={style.text}>{t("admin12")}(s) *</Text>
                                     <TextInput {...props} textContentType="familyName" value={prenom} onChangeText={setPrenom} />
                                 </View>
                             </View>
@@ -293,28 +295,28 @@ export default function AddUser(){
 
                             <View style={[style.block, {zIndex: 3, flexDirection: "row", justifyContent: "space-between"}]}>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>adresse mail*</Text>
+                                    <Text style={style.text}>{t("drawer15")}*</Text>
                                     <TextInput editable={false} {...props} textContentType="emailAddress" value={mail} onChangeText={setMail} />
                                 </View>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>numéro* </Text>
-                                    <TextInput {...props} placeholder="d'un parent" textContentType="telephoneNumber" value={numb} onChangeText={setNumb} />
+                                    <Text style={style.text}>{t("drawer16")}* </Text>
+                                    <TextInput {...props} placeholder="parent" textContentType="telephoneNumber" value={numb} onChangeText={setNumb} />
                                 </View>
                             </View>
 
                             <View style={[style.block, {flexDirection: "row", justifyContent: "space-between"}]}>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>Site web </Text>
+                                    <Text style={style.text}>{t("admin13")}</Text>
                                     <TextInput {...props} textContentType="URL" value={web} onChangeText={setWeb} />
                                 </View>
                                 <View style={{width: "47%"}}>
-                                    <Text style={style.text}>compte LinkedIn </Text>
+                                    <Text style={style.text}>{t("admin14")} </Text>
                                     <TextInput {...props} textContentType="URL" value={linkedIn} onChangeText={setLinkedIn} />
                                 </View>
                             </View>
 
                             <View style={[style.block, {}]}>
-                                <Text style={style.text}>Ou habitez vous? *</Text>
+                                <Text style={style.text}>{t("admin15")} *</Text>
                                 <TextInput {...props} textContentType="URL" value={adress} onChangeText={setAdress} /> 
                             </View>
                             
@@ -324,36 +326,36 @@ export default function AddUser(){
                             selected==="document" && <View style={style.part2}>
 
                                 <View style={[style.block, {marginTop: 20}]}>
-                                    <Text style={style.text}>passeport/carte identité</Text>
+                                    <Text style={style.text}>{t('admin16')}</Text>
                                     {passport==="" ? <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor: back, borderRadius: 10, margin: 10}}>
                                         <View style={{flexDirection: 'row', justifyContent: "center", alignItems: "center"}}>
                                             <Ionicons name="add-circle" color={chart} size={40} />
-                                            <Text style={[style.text, {color: front}]}>cliquer pour choisir le document</Text>
+                                            <Text style={[style.text, {color: front}]}>{t('document8')}</Text>
                                         </View>
                                     </TouchableOpacity> : 
                                     <View style={{flexDirection: 'row', justifyContent: "space-between", alignItems: "center"}}>
-                                        <Text style={[style.text, {color: front}]}>document pris en compte</Text>
+                                        <Text style={[style.text, {color: front}]}>{t('admin3')}</Text>
                                         <Ionicons name="trash" color={"tomato"} size={30} onPress={()=>setPassport("")} />
                                     </View>}
                                 </View>
 
                                 <View style={[style.block, {marginTop: 20}]}>
-                                    <Text style={style.text}>votre photo</Text>
+                                    <Text style={style.text}>{t("admin17")}</Text>
                                     {photo==="" ? <TouchableOpacity onPress={pickImage} style={{backgroundColor: back, borderRadius: 10, margin: 10}}>
                                         <View style={{flexDirection: 'row', justifyContent: "center", alignItems: "center"}}>
                                             <Ionicons name="add-circle" color={chart} size={40} />
-                                            <Text style={[style.text, {color: front}]}>cliquer pour choisir le document</Text>
+                                            <Text style={[style.text, {color: front}]}>{t('document8')}</Text>
                                         </View>
                                     </TouchableOpacity>: 
                                     <View style={{flexDirection: 'row', justifyContent: "space-between", alignItems: "center"}}>
-                                        <Text style={[style.text, {color: front}]}>document pris en compte</Text>
+                                        <Text style={[style.text, {color: front}]}>{t('admin3')}</Text>
                                         <Ionicons name="trash" color={"tomato"} size={30} onPress={()=>setPhoto("")} />
                                     </View>}
                                 </View>
 
                                 <View style={[style.block, {zIndex: 1, marginTop: 30}]}>
                                     <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                        <Text style={[style.title, {color: back, textAlign: "center"}]}>valider</Text>
+                                        <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('continue')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

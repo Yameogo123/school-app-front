@@ -21,7 +21,7 @@ export default function Page2(){
         Pacifico: require('../../../assets/fonts/Pacifico.ttf'),
     }); 
     const dispatch= useDispatch()
-    const [show, setShow] = useState(false)
+    const [show, setShow] = useState(true)
     const hideDialog = (rep) => {setShow(false); handleLanguage(rep)};
 
 

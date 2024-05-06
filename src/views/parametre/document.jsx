@@ -12,6 +12,7 @@ import Toast from "react-native-toast-message";
 import * as DocumentPicker from 'expo-document-picker';
 import { API, Get, Remove, Send, Update } from "../../api/service";
 import { groupBy } from "lodash";
+import { useTranslation } from "react-i18next";
 
 
 export default function Document(){
@@ -28,12 +29,11 @@ export default function Document(){
     const [type, setType]= useState("");
     const [libelle, setLibelle]= useState("");
     const [fileResponse, setFileResponse] = useState(null);
-
     const [update, setUpdate]=useState(false);
-
     const [datas, setDatas]= useState([]);
-
     const [isSending, setIsSending]= useState(false);
+
+    const {t, _}=useTranslation();
 
     function groupIt(array){
         let arr= groupBy(array, 'type')
@@ -87,7 +87,7 @@ export default function Document(){
             }
         } catch (err) {
             //console.warn(err);
-            Toast.show({text1: "Information", text2: "aucun fichier sélectionné", type: "info"});
+            Toast.show({text1: "Information", text2: t("document1"), type: "info"});
         }
     }, []);
 
@@ -115,12 +115,12 @@ export default function Document(){
                         // upd(use2)
                         setShow(false);
                         Toast.show({
-                            text1: "message", text2: "document créé avec succès", topOffset: 50
+                            text1: "message", text2: t("document2"), topOffset: 50
                         })
                         setLibelle(""); setType(""); setFileResponse(null); setUpdate(!update);
                     }else{
                         Toast.show({
-                            text1: "erreur", text2: "problème d'ajout du fichier.",
+                            text1: "erreur", text2: t("document3"),
                             topOffset: 50, type:"error"
                         })
                     }
@@ -129,7 +129,7 @@ export default function Document(){
             setIsSending(false)
         }else{
             Toast.show({
-                text1: "erreur", text2: "veuillez saisir les champs",
+                text1: t("file4"), text2: t("missing1"),
                 topOffset: 50, type:"error"
             })
         }
@@ -143,37 +143,37 @@ export default function Document(){
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}
             >
                 <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
-                    <View style={{ justifyContent: 'center', backgroundColor: back, borderRadius: 20, padding: 20, height: 500}}>                        
-                        <Text style={[style.text, {color: chart}]}>nouveau document</Text>
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={200} >
+                        <View style={{ justifyContent: 'center', backgroundColor: back, borderRadius: 20, padding: 20, height: 500, borderRadius: 50}}>                        
+                            <Text style={[style.text, {color: chart}]}>{t("document4")}</Text>
 
-                        <TextInput placeholder={"libelle du fichier"} leading={<Ionicons name="md-pencil-outline" size={20} color={front} />} 
-                            {...props} onChangeText={setLibelle} inputStyle={{color:front}}
-                        />
-
-                        <View style={{ justifyContent: "space-between", marginTop: 25, alignItems: "center"}}>
-                            <SelectDropdown buttonStyle={{ width: "85%", backgroundColor: chart, color: "white", borderRadius: 20}} 
-                                buttonTextStyle={{ color: "white"}}
-                                data={types} defaultButtonText="Choix de la catégorie."
-                                onSelect={(selectedItem, index) => {
-                                    setType(selectedItem)
-                                }}
-                                buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
-                                }}
-                                rowTextForSelection={(item, index) => {
-                                    return item
-                                }}
+                            <TextInput placeholder={t("document5")} leading={<Ionicons name="pencil-outline" size={20} color={front} />} 
+                                {...props} onChangeText={setLibelle} inputStyle={{color:front}}
                             />
-                            <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:chart, margin : 35, width: "85%", borderRadius: 20}}>
-                                <Text style={[style.text, {color: "white"}]}>{!fileResponse ? "choix de fichier" : "fichier choisi"}</Text>
+
+                            <View style={{ justifyContent: "space-between", marginTop: 25, alignItems: "center"}}>
+                                <SelectDropdown buttonStyle={{ width: "85%", backgroundColor: chart, color: "white", borderRadius: 20}} 
+                                    buttonTextStyle={{ color: "white"}}
+                                    data={types} defaultButtonText={t("document6")}
+                                    onSelect={(selectedItem, index) => {
+                                        setType(selectedItem)
+                                    }}
+                                    buttonTextAfterSelection={(selectedItem, index) => {
+                                        return selectedItem
+                                    }}
+                                    rowTextForSelection={(item, index) => {
+                                        return item
+                                    }}
+                                />
+                                <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:chart, margin : 35, width: "85%", borderRadius: 20}}>
+                                    <Text style={[style.text, {color: "white"}]}>{!fileResponse ? t("cours7") : t("cours8")}</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity disabled={isSending} onPress={handleSave} style={{backgroundColor: "green", margin : 35, borderRadius: 20}}>
+                                <Text style={[style.text, {color: "white"}]}>{t('issu4')}</Text>
                             </TouchableOpacity>
                         </View>
-
-                        <TouchableOpacity disabled={isSending} onPress={handleSave} style={{backgroundColor: "green", margin : 35, borderRadius: 20}}>
-                            <Text style={[style.text, {color: "white"}]}>Enregistrer</Text>
-                        </TouchableOpacity>
-                    </View>
                     </KeyboardAvoidingView>
                 </TouchableWithoutFeedback>
             </RNModal>
@@ -261,10 +261,10 @@ export default function Document(){
 
     return (
         <View style={style.container}>
-            <Text style={style.text}>Les documents</Text>
+            <Text style={style.text}>{t('document7')}</Text>
 
             <TouchableOpacity onPress={()=>setShow(true)} >
-                <Text style={[style.text, {color: "blue"}]}>ajouter des documents</Text>
+                <Text style={[style.text, {color: "blue"}]}>{t('document8')}</Text>
             </TouchableOpacity>
 
             <SectionList stickyHeaderHiddenOnScroll stickySectionHeadersEnabled
@@ -272,7 +272,7 @@ export default function Document(){
                 keyExtractor={(item, index) => item + index}
                 renderItem={({item}) => (
                     <View style={style.item}>
-                        <Text style={style.title}>{item?.label}</Text>
+                        <Text style={style.title}>{t(item?.label)}</Text>
                         <View style={style.item2}>
                             <TouchableOpacity style={{margin: 5}} onPress={()=>handleDetail(item)}>
                                 <Ionicons name="eye" color={"green"} size={30} />

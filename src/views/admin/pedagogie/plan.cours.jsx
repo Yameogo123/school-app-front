@@ -9,7 +9,8 @@ import Toast from "react-native-toast-message";
 import { adaptSelect } from "../../../api/functions";
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import moment from "moment";
-
+import { useTranslation } from "react-i18next";
+import SimpleHeader from "../../../template/header/simpleHeader";
 
 
 export default function PlanCours(){
@@ -44,6 +45,7 @@ export default function PlanCours(){
     const [fin, setFin] = useState(moment().add(1, "hour").toDate());
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
@@ -72,7 +74,7 @@ export default function PlanCours(){
     useEffect(()=>{
         nav.setOptions({
             header : ()=> {
-                return <AdminHeader />
+                return <SimpleHeader lk="planifier"  />
             }, 
             headerShown: true
         })
@@ -134,12 +136,12 @@ export default function PlanCours(){
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur", text2: "erreur de programmation de cours",
+                            text1: t("file4"), text2: t("file4"),
                             topOffset: 50, type:"error"
                         })
                     }else{
                         Toast.show({
-                            text1: "message", text2: "cours programmé avec succès", topOffset: 50
+                            text1: "message", text2: t("admin38"), topOffset: 50
                         })
                         setProfesseur(null); setClasse([]); setCour(null); setSalle(null); 
                     }
@@ -148,11 +150,11 @@ export default function PlanCours(){
             ).catch(()=>{
                 setIsSending(false);
                 Toast.show({
-                    text1: "erreur", text2: "erreur de programmation de cours", topOffset: 50, type:"error"
+                    text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                 })
             })
         }else{
-            Toast.show({text1: "Formulaire", text2: "Veuillez remplir tous les champs", type: "error", topOffset: 60})
+            Toast.show({text1: t("admin6"), text2: t("missing1"), type: "error", topOffset: 60})
         }
     }
 
@@ -177,15 +179,15 @@ export default function PlanCours(){
             
                 <View style={style.container}>
                     <View style={style.head}>
-                        <Text style={style.title}>Planifier un cours</Text>
-                        <Text style={[style.text, {color: front}]}>Veuillez remplir tous les champs</Text>
+                        <Text style={style.title}>{t('admin35')}</Text>
+                        <Text style={[style.text, {color: front}]}>{t("admin8")}</Text>
                     </View>
                     <View style={style.part2}>
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5}}>
                             <View style={[style.block, {zIndex: 5, width: "44%"}]}>
-                                <Text style={style.text}>Quelles classes ? </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={setClasse}
+                                <Text style={style.text}>{t('cours12')} ? </Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={setClasse}
                                     open={open} value={classe} items={adaptSelect(classes)}
                                     setOpen={setOpen} searchable maxHeight={250} setValue={setClasse}
                                     setItems={setClasses} multiple={true} mode="BADGE" listMode="SCROLLVIEW"
@@ -194,8 +196,8 @@ export default function PlanCours(){
                             </View>
 
                             <View style={[style.block, {zIndex: 4, width: "44%"}]}>
-                                <Text style={style.text}>Quel cours ? </Text>
-                                <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
+                                <Text style={style.text}>{t('admin39')} ? </Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem}
                                     open={open1} value={cour} items={adaptSelect(cours)} searchable
                                     setOpen={setOpen1} setValue={setCour} listMode="SCROLLVIEW"
                                     setItems={setCours} maxHeight={150}
@@ -206,8 +208,8 @@ export default function PlanCours(){
 
                         <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3}}>
                             <View style={[style.block, {zIndex: 3, width: "44%"}]}>
-                                <Text style={style.text}>Quel professeur</Text>
-                                <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem1}
+                                <Text style={style.text}>{t("admin23")}</Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem1}
                                     open={open3} value={professeur} items={adaptSelect(professeurs, 1)} searchable maxHeight={150}
                                     setOpen={setOpen3} setItems={setProfesseurs} setValue={setProfesseur} //theme="DARK"
                                     badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
@@ -216,8 +218,8 @@ export default function PlanCours(){
                             </View>
 
                             <View style={[style.block, {zIndex: 2, width: "44%"}]}>
-                                <Text style={style.text}>Quelle salle</Text>
-                                <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem2}
+                                <Text style={style.text}>{t("admin40")}</Text>
+                                <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem2}
                                     open={open2} value={salle} items={adaptSelect(salles)} setValue={setSalle}
                                     setOpen={setOpen2} searchable
                                     setItems={setSalles} maxHeight={150}
@@ -228,7 +230,7 @@ export default function PlanCours(){
                         </View>
 
                         <View style={[style.block, {zIndex: 1, alignItems:"flex-start"}]}>
-                            <Text style={style.text}>le jour ? </Text>
+                            <Text style={style.text}>{t('admin41')} ? </Text>
                             {Platform.OS==="android" ? <TouchableOpacity onPress={()=>showMode("date", handleJour)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 25}]}>
                                 <Text style={[style.text, {color: chart, textAlign: "center"}]}>{ moment(jour).format("YYYY-MM-DD") }</Text>
                             </TouchableOpacity>: <DateTimePicker 
@@ -239,11 +241,11 @@ export default function PlanCours(){
 
                         <View style={{flexDirection: "row", justifyContent: "space-between", zIndex: 1}}>
                             <View style={[style.block, {zIndex: 1, width: "45%", alignItems:"flex-start"}]}>
-                                <Text style={style.text}>Heure de début ? </Text>
+                                <Text style={style.text}>{t('admin42')} ? </Text>
                                 {Platform.OS==="android" ? 
                                     <TouchableOpacity onPress={()=>showMode("time", handleDateDebut)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 15}]}>
                                         <Text style={[style.text, {color: chart, textAlign: "center"}]}>{moment(debut).format("HH:mm:ss")}</Text>
-                                    </TouchableOpacity>: <DateTimePicker 
+                                    </TouchableOpacity> : <DateTimePicker 
                                     value={debut} mode={"time"} is24Hour={true}
                                     onChange={handleDateDebut}
                                 />}
@@ -251,14 +253,12 @@ export default function PlanCours(){
                             </View>
 
                             <View style={[style.block, {zIndex: 1, width: "45%", alignItems:"flex-start"}]}>
-                                <Text style={style.text}>Heure de fin ? </Text>
+                                <Text style={style.text}>{t('admin43')} ? </Text>
                                 {Platform.OS==="android" ? 
                                     <TouchableOpacity onPress={()=>showMode("time", handleDateFin)} style={[style.btn, {backgroundColor: back, borderRadius: 30, paddin: 15}]}>
                                         <Text style={[style.text, {color: chart, textAlign: "center"}]}>{moment(fin).format("HH:mm:ss")}</Text>
                                     </TouchableOpacity>: <DateTimePicker 
-                                        value={fin}
-                                        mode={"time"}
-                                        onChange={handleDateFin}
+                                        value={fin} mode={"time"} onChange={handleDateFin}
                                     />
                                 }
                             </View>
@@ -267,7 +267,7 @@ export default function PlanCours(){
 
                         <View style={[style.block, {zIndex: 1}]}>
                             <TouchableOpacity disabled={isSending} onPress={handleValider} style={[style.btn, {backgroundColor: chart, borderRadius: 30, margin: 40}]}>
-                                <Text style={[style.title, {color: back, textAlign: "center"}]}>planifier</Text>
+                                <Text style={[style.title, {color: back, textAlign: "center"}]}>{t('admin44')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

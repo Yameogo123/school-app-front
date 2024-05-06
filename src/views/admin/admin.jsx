@@ -4,11 +4,13 @@ import AnimatedLottieView from "lottie-react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AdminHeader from "../../template/header/adminHeader";
+import { useTranslation } from "react-i18next";
 
 
 export default function Admin(){
 
     const nav=  useNavigation();
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -30,7 +32,7 @@ export default function Admin(){
 
     return (
         <View style={style.container}>
-            <Text style={style.text}>Gérer toute votre administration ici</Text>
+            <Text style={style.text}>{t('admin1')}</Text>
             <AnimatedLottieView source={require("../../../assets/admin.json")} style={style.lottie} autoPlay loop />
         </View>
     );

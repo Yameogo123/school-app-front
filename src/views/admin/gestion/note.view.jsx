@@ -15,6 +15,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import * as DocumentPicker from 'expo-document-picker';
 import { adaptSelect } from "../../../api/functions";
 import prompt from 'react-native-prompt-android';
+import { useTranslation } from "react-i18next";
 
 
 export default function NoteView(){
@@ -51,6 +52,8 @@ export default function NoteView(){
     const [open3, setOpen3]= useState(false);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
+
 
     const handleJour=(event, selectedDate)=>{
         const currentDate = selectedDate || date
@@ -115,7 +118,7 @@ export default function NoteView(){
                 setCopie(response?.assets[0]);
             }
         } catch (err) {
-            Toast.show({text1: "Information", text2: "aucun fichier sélectionné", type: "info"})
+            Toast.show({text1: "Information", text2: t("document1"), type: "info"})
         }
     }, []);
 
@@ -124,12 +127,12 @@ export default function NoteView(){
             (rp)=>{
                 if(rp.error){
                     Toast.show({
-                        text1: "erreur", text2: "la mise à jour a échoué",
+                        text1: t("file4"), text2: t("file4"),
                         topOffset: 50, type:"error"
                     })
                 }else{
                     Toast.show({
-                        text1: "message", text2: "document joint avec succès",
+                        text1: "message", text2: t("cours8"),
                         topOffset: 50
                     })
                     setCopie(undefined); setLibelle(""); setNote(""); setDate(new Date()); setCour("");
@@ -141,25 +144,24 @@ export default function NoteView(){
 
     const pop= ()=>{
         return(
-            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 200, marginBottom: 200}}
+            <RNModal style={{backgroundColor: chart, margin: 15, marginTop: 200, marginBottom: 200, borderRadius: 50}}
                 isVisible={show} animationInTiming={500} animationOutTiming={500} 
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                     <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
                         <ScrollView contentContainerStyle={{alignItems: "center", justifyContent: "center"}}>
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 5, }}>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quelle élève ? </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" //onSelectItem={(item)=> console.log(item)}
+                                    <Text style={style.text}>{t("admin31")} ? </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} //onSelectItem={(item)=> console.log(item)}
                                         open={open1} value={eleve} items={adaptSelect(eleves, 1)} searchable
                                         setOpen={setOpen1} setValue={setEleve} maxHeight={250} listMode="SCROLLVIEW"
-                                        setItems={setEleves} //theme="DARK"
-                                        //mode="BADGE"
+                                        setItems={setEleves} 
                                         badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                                     />
                                 </View>
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Quelle cours </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
+                                    <Text style={style.text}>{t("admin39")}</Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem}
                                         open={open2} value={cour} items={adaptSelect(cours)} searchable
                                         setOpen={setOpen2} setValue={setCour} maxHeight={250} listMode="SCROLLVIEW"
                                         setItems={setCours} //theme="DARK"
@@ -171,14 +173,14 @@ export default function NoteView(){
 
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3}}>
                                 <View style={[style.block, {zIndex: 3, width: "45%"}]}>
-                                    <TextInput placeholder={"note sur 20"} inputStyle={{color:"black"}} onChangeText={setNote}
+                                    <TextInput placeholder={t("admin73")} inputStyle={{color:"black"}} onChangeText={setNote}
                                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                                     />
                                 </View>
 
                                 <View style={[style.block, {zIndex: 2, width: "45%"}]}>
                                     <TouchableOpacity onPress={handleDocumentSelection} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
-                                        <Text style={[style.text, {color: "black"}]}>{!copie ? "choix de la copie de l'élève" : "fichier choisi"}</Text>
+                                        <Text style={[style.text, {color: "black"}]}>{!copie ? t("admin74") : t("cours8")}</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -186,7 +188,7 @@ export default function NoteView(){
 
                             <View style={{flexDirection: "row", justifyContent: "space-around", zIndex: 3}}>
                                 <View style={[style.block, {alignItems:"flex-start"}]}>
-                                    <Text style={style.text}>date du devoir  ? </Text>
+                                    <Text style={style.text}>{t('admin75')}  ? </Text>
                                     {
                                         Platform.OS==='android' ? <TouchableOpacity onPress={showMode} style={{backgroundColor:back, borderRadius: 20, padding: 5}}>
                                             <Text style={[style.text, {color: "black"}]}>{moment(date).format("YYYY-MM-DD")}</Text>
@@ -199,8 +201,8 @@ export default function NoteView(){
                                 </View>
 
                                 <View style={[style.block, {zIndex: 4, width: "45%"}]}>
-                                    <Text style={style.text}>Choix de période </Text>
-                                    <DropDownPicker placeholder="Veuillez choisir" onSelectItem={setItem}
+                                    <Text style={style.text}>{t('admin76')} </Text>
+                                    <DropDownPicker placeholder={t("comptabilite2")} onSelectItem={setItem}
                                         open={open3} value={periode} items={adaptSelect(periodes)}
                                         setOpen={setOpen3} setValue={setPeriode} maxHeight={100} listMode="SCROLLVIEW"
                                         setItems={setPeriodes} //theme="DARK"
@@ -214,12 +216,12 @@ export default function NoteView(){
                             <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
                                 <View >
                                     <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                        <Text style={style.text}>Annuler</Text>
+                                        <Text style={style.text}>{t("cancel")}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View >
                                     <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
-                                        <Text style={style.text}>Ajouter</Text>
+                                        <Text style={style.text}>{t("continue")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -230,20 +232,20 @@ export default function NoteView(){
     }
 
     const handleRemove = (id) => {
-        Alert.alert("validation", "voulez vous vraiment supprimer cette note", [
-            {text: "annuler"},
-            {text: "continuer", onPress: ()=>{
+        Alert.alert("validation", t("rappel1"), [
+            {text: t("cancel")},
+            {text: t("continue"), onPress: ()=>{
                 setLibelle("..")
                 Remove("/note/"+id, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             });
                         }else{
                             Toast.show({
-                                text1: "message", text2: "note bien supprimée",
+                                text1: "message", text2: t("rappel8"),
                                 topOffset: 50
                             });
                             setLibelle("");
@@ -251,7 +253,7 @@ export default function NoteView(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué",
+                        text1: t('file4'), text2: t('file4'),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -263,7 +265,7 @@ export default function NoteView(){
         const exist= tbData.find((val)=> val?.eleve=== eleve && val?.note===note && val?.date===date && val?.cours===cour &&val?.periode===periode)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur", text2: "cette note existe déjà",
+                text1: t('file4'), text2: t("admin62"),
                 topOffset: 50, type:"error"
             })
         }else{
@@ -272,7 +274,7 @@ export default function NoteView(){
                 const n= parseFloat(note)
                 if(isNaN(n)){
                     Toast.show({
-                        text1: "erreur", text2: "cette note n'est pas valide",
+                        text1: t('file4'), text2: t("admin77"),
                         topOffset: 50, type:"error"
                     })
                 }else{
@@ -286,7 +288,7 @@ export default function NoteView(){
                         (rs)=>{
                             if(rs?.error){
                                 Toast.show({
-                                    text1: "erreur", text2: "erreur d'ajout de note",
+                                    text1: t('file4'), text2: t('file4'),
                                     topOffset: 50, type:"error"
                                 })
                             }else{
@@ -313,7 +315,7 @@ export default function NoteView(){
                                 }
 
                                 Toast.show({
-                                    text1: "message", text2: "note bien ajouté",
+                                    text1: "message", text2: t("rappel8"),
                                     topOffset: 50
                                 })
                                 setLibelle("");
@@ -322,14 +324,14 @@ export default function NoteView(){
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur", text2: "erreur d'ajout de note",
+                            text1: t('file4'), text2:t('file4'),
                             topOffset: 50, type:"error"
                         })
                     })
                 }
             }else{
                 Toast.show({
-                    text1: "erreur", text2: "veuillez remplir les champs", topOffset: 50, type:"error"
+                    text1: t('file4'), text2: t("missing1"), topOffset: 50, type:"error"
                 })
             }
             setIsSending(false);
@@ -338,32 +340,32 @@ export default function NoteView(){
 
     const handleEdit= (id) => {
         const note= tbData.find((val)=> val?._id=== id)
-        prompt("modification", "changement de la note", [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt("modification", t("admin66"), [
+            {text:t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 setLibelle(".");
                 const nt= parseFloat(text);
                 if(isNaN(nt)){
                     Toast.show({
-                        text1: "erreur", text2: "erreur de mise à jour", topOffset: 50, type:"error"
+                        text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                     })
                 }else{
                     Update("/note/update", {"note": {...note, note: nt, _id: id}}, true, token).then(
                         (rs)=>{
                             if(rs?.error){
                                 Toast.show({
-                                    text1: "erreur", text2: "erreur de modification de la note", topOffset: 50, type:"error"
+                                    text1: t('file4'), text2: t('file4'), topOffset: 50, type:"error"
                                 })
                             }else{
                                 Toast.show({
-                                    text1: "message", text2: "note modifiée", topOffset: 50
+                                    text1: "message", text2: t("rappel8"), topOffset: 50
                                 })
                                 setLibelle(""); setShow(false)
                             }
                         }
                     ).catch(()=>{
                         Toast.show({
-                            text1: "erreur", text2: "erreur de modification de la note",
+                            text1:t('file4'), text2: t('file4'),
                             topOffset: 50, type:"error"
                         })
                     })
@@ -411,14 +413,14 @@ export default function NoteView(){
         <>
             <View style={style.container}>
                 <View style={style.block}>
-                    <TextInput placeholder={"filtrer par nom élève"} inputStyle={{color:"black"}} onChangeText={setFilter}
+                    <TextInput placeholder={t("admin78")} inputStyle={{color:"black"}} onChangeText={setFilter}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                     />
                 </View>
                 <View style={style.part2} onTouchStart={()=>Keyboard.dismiss()}>
                     <View style={[style.block, {marginBottom: 80}]}>
                         <View style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginBottom: 15}}>
-                            <Text style={[style.text, {width: "64%"}]}>Liste des notes</Text>
+                            <Text style={[style.text, {width: "64%"}]}>{t('admin79')}</Text>
                             <View style={{width: "24%"}}>
                                 <TouchableOpacity onPress={()=> setShow(true)} style={[style.btn, {backgroundColor: back}]}>
                                     <Ionicons name="add" size={25} color={chart} />

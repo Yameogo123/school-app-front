@@ -10,6 +10,7 @@ import { Get, Remove, Send, Update } from "../../../api/service";
 import Toast from "react-native-toast-message";
 import RNModal from "react-native-modal";
 import prompt from 'react-native-prompt-android';
+import { useTranslation } from "react-i18next";
 
 
 export default function Salle(){
@@ -28,6 +29,7 @@ export default function Salle(){
     const [tbData, setTbData]= useState([]);
 
     const [isSending, setIsSending]= useState(false);
+    const {t, _}=useTranslation();
 
     useEffect(()=>{
         nav.setOptions({
@@ -55,19 +57,19 @@ export default function Salle(){
                 backdropTransitionInTiming={500} backdropTransitionOutTiming={500}>
                 <View>
                     <View style={style.block}>
-                        <TextInput placeholder={"saisir un libelle"} inputStyle={{color:"black"}} onChangeText={setLibelle}
+                        <TextInput placeholder={t("admin61")} inputStyle={{color:"black"}} onChangeText={setLibelle}
                             {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                         />
                     </View>
                     <View style={{display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
                         <View >
                             <TouchableOpacity onPress={()=>{setShow(false); setLibelle("")}} style={[style.btn2, {backgroundColor: "red"}]}>
-                                <Text style={style.text}>Annuler</Text>
+                                <Text style={style.text}>{t('cancel')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View >
                             <TouchableOpacity disabled={isSending} onPress={handleNew} style={[style.btn2, {backgroundColor: "green"}]}>
-                                <Text style={style.text}>Ajouter</Text>
+                                <Text style={style.text}>{t('continue')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -77,26 +79,26 @@ export default function Salle(){
     }
 
     const handleRemove = (id) => {
-        Alert.alert("validation", "voulez vous vraiment supprimer cette salle", [
-            {text:"annuler"},
-            {text: "continuer", onPress: ()=>{
+        Alert.alert("validation", t("rappel1"), [
+            {text:t("cancel")},
+            {text: t("continue"), onPress: ()=>{
                 setLibelle("..")
                 Remove("/salle/"+id, token).then(
                     (rs)=>{
                         if(rs.error){
                             Toast.show({
-                                text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
+                                text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message", text2: "salle bien supprimée", topOffset: 50
+                                text1: "message", text2: t("rappel8"), topOffset: 50
                             })
                             setLibelle("")
                         }
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur", text2: "la suppression a échoué", topOffset: 50, type:"error"
+                        text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                     })
                 })
             }}
@@ -107,7 +109,7 @@ export default function Salle(){
         const exist= tbData.find((val)=> val?.libelle=== libelle)!==undefined
         if(exist){
             Toast.show({
-                text1: "erreur", text2: "cette salle existe déjà", topOffset: 50, type:"error"
+                text1: t("file4"), text2: t("file4"), topOffset: 50, type:"error"
             })
         }else{
             setIsSending(true)
@@ -115,11 +117,11 @@ export default function Salle(){
                 (rs)=>{
                     if(rs?.error){
                         Toast.show({
-                            text1: "erreur", text2: "erreur d'ajout de salle", topOffset: 50, type:"error"
+                            text1:t("file4"), text2: t("file4"), topOffset: 50, type:"error"
                         })
                     }else{
                         Toast.show({
-                            text1: "message", text2: "salle bien ajoutée", topOffset: 50
+                            text1: "message", text2: t("rappel8"), topOffset: 50
                         })
                         setLibelle("")
                         setShow(false)
@@ -128,7 +130,7 @@ export default function Salle(){
                 }
             ).catch(()=>{
                 Toast.show({
-                    text1: "erreur", text2: "erreur d'ajout de salle",
+                    text1: t("file4"), text2: t("file4"),
                     topOffset: 50, type:"error"
                 })
                 setIsSending(false)
@@ -138,22 +140,20 @@ export default function Salle(){
 
     const handleEdit= (id) => {
         const salle= tbData.find((val)=> val?._id=== id)
-        prompt("modification", "changement du libellé de la salle "+salle?.libelle, [
-            {text:"annuler", style: "cancel"},
-            {text: "continuer", onPress: (text)=>{
+        prompt("modification", t("admin61")+ '('+ salle?.libelle+')', [
+            {text: t("cancel"), style: "cancel"},
+            {text: t("continue"), onPress: (text)=>{
                 setLibelle(".");
                 Update("/salle/update", {"salle": {"libelle": text, ecole: user?.ecole?._id, _id: id}}, true, token).then(
                     (rs)=>{
                         if(rs?.error){
                             Toast.show({
-                                text1: "erreur",
-                                text2: "erreur de modification de la salle",
+                                text1: t('file4'), text2: t('file4'),
                                 topOffset: 50, type:"error"
                             })
                         }else{
                             Toast.show({
-                                text1: "message",
-                                text2: "salle modifié",
+                                text1: "message", text2: t("rappel8"),
                                 topOffset: 50
                             })
                             setLibelle("")
@@ -162,8 +162,8 @@ export default function Salle(){
                     }
                 ).catch(()=>{
                     Toast.show({
-                        text1: "erreur",
-                        text2: "erreur de modification de la salle",
+                        text1:  t('file4'),
+                        text2:  t('file4'),
                         topOffset: 50, type:"error"
                     })
                 })
@@ -173,7 +173,7 @@ export default function Salle(){
             cancelable: true,
             type: "plain-text",
             //defaultValue: 'test',
-            placeholder: 'saisir le nouveau libellé'
+            placeholder: t("admin61")
         });
     }
 
@@ -213,14 +213,14 @@ export default function Salle(){
         <>
             <View style={style.container}>
                 <View style={style.block}>
-                    <TextInput placeholder={"filtrer par libelle"} inputStyle={{color:"black"}} onChangeText={setFilter}
+                    <TextInput placeholder={t("cours5")} inputStyle={{color:"black"}} onChangeText={setFilter}
                         {...props} textContentType="name" leading={<Ionicons name="pencil" size={25} color={chart} />} 
                     />
                 </View>
                 <View style={style.part2} onTouchStart={()=>Keyboard.dismiss()}>
                     <View style={[style.block, {marginBottom: 80}]}>
                         <View style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginBottom: 15}}>
-                            <Text style={[style.text, {width: "64%"}]}>Liste des salles disponibles</Text>
+                            <Text style={[style.text, {width: "64%"}]}>{t('admin89')}</Text>
                             <View style={{width: "24%"}}>
                                 <TouchableOpacity onPress={()=> setShow(true)} style={[style.btn, {backgroundColor: back}]}>
                                     <Ionicons name="add" size={25} color={chart} />

@@ -6,6 +6,7 @@ import SimpleHeader from "../../template/header/simpleHeader";
 import img from "../../../assets/icon.png"
 import { useSelector } from "react-redux";
 import { Get } from "../../api/service";
+import { useTranslation } from "react-i18next";
 
 export default function Scolarite(){
 
@@ -16,6 +17,7 @@ export default function Scolarite(){
     const user= useSelector((state)=> state.userReducer.user);
     const token= useSelector((state)=> state.userReducer.token);
     const loading= useSelector((state)=>state.userReducer.loading);
+    const {t, _}=useTranslation();
 
     const [directeur, setDirecteur]= useState(null);
 
@@ -75,15 +77,15 @@ export default function Scolarite(){
                     <DisplayCard item={{id: 3, icon: 'https://assets1.lottiefiles.com/packages/lf20_rLfMZE.json'}} link={user?.ecole?.web} />
                 </View>
                 <View style={{alignItems:"center", margin: 15}}>
-                    <Text style={style.title}>Nom de l'école</Text>
+                    <Text style={style.title}>{t('scolaire1')}</Text>
                     <Text style={style.text}>{user?.ecole?.titre}</Text>
                 </View>
                 <View style={{alignItems:"center", margin: 15}}>
-                    <Text style={style.title}>Directeur géneral</Text>
+                    <Text style={style.title}>{t('scolaire2')}</Text>
                     <Text style={style.text}>{directeur?.nom+" "+directeur?.prenom}</Text>
                 </View>
                 <View style={{alignItems:"center", margin: 15}}>
-                    <Text style={style.title}>Localisation</Text>
+                    <Text style={style.title}>{t('scolaire3')}</Text>
                     <Text style={style.text}>{user?.ecole?.localisation}</Text>
                 </View>
                 <View style={{alignItems:"center", margin: 15}}>
